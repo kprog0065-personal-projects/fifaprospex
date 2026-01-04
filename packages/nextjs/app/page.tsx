@@ -75,7 +75,7 @@ const Index = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-[#0066B3]/10 to-[#E84142]/10" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <div className="mb-8 flex justify-center">
+            <div className="mb-8 flex flex-col items-center justify-center gap-4">
               <Image
                 src="/images/prospex-logo-light.png"
                 alt="Prospex Logo"
@@ -83,6 +83,7 @@ const Index = () => {
                 height={256}
                 className="w-48 h-48 md:w-64 md:h-64 object-contain"
               />
+              <h1 className="text-5xl md:text-7xl font-bold text-[#0066B3] tracking-tight">Prospex</h1>
             </div>
             <p className="text-xl md:text-2xl text-gray-700 mb-4 max-w-4xl mx-auto">
               Redefining Football Talent Development, Investment, and Fan Engagement

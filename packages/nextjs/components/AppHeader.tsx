@@ -22,9 +22,9 @@ const AppHeader = () => {
   const profileItems = [
     { name: "Investor Profile", path: "/select_profile/investor_profile" },
     { name: "Athlete Profile", path: "/select_profile/athlete_profile" },
+    { name: "Scout Profile", path: "/select_profile/scout_profile" },
     // { name: "Full Athlete NFT", path: "/athlete/1/nft" },
-    { name: "Trainer Profile", path: "/trainer" },
-    { name: "Scout Profile", path: "/scout" },
+    { name: "Trainer Profile", path: "/select_profile/trainer_profile" },
   ];
 
   return (
