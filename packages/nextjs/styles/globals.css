@@ -121,3 +121,49 @@
 .link:hover {
   opacity: 80%;
 }
+
+/* ========== SCROLLBAR STYLES ========== */
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9; /* Light theme: gray thumb, light track */
+}
+
+[data-theme="dark"] * {
+  scrollbar-color: #64748b #1e293b; /* Dark theme: lighter gray thumb, dark track */
+}
+
+/* Chrome, Edge, Safari scrollbar */
+*::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #f1f5f9; /* Light gray track */
+  border-radius: 8px;
+}
+
+[data-theme="dark"] *::-webkit-scrollbar-track {
+  background: #1e293b; /* Dark track */
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1; /* Medium gray thumb */
+  border-radius: 8px;
+  border: 2px solid #f1f5f9;
+}
+
+[data-theme="dark"] *::-webkit-scrollbar-thumb {
+  background-color: #64748b; /* Lighter gray for dark theme */
+  border: 2px solid #1e293b;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8; /* Darker on hover */
+}
+
+[data-theme="dark"] *::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8; /* Same hover for dark */
+}

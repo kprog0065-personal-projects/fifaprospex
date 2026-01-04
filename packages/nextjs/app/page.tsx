@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Shield, Star, TrendingUp, Trophy, Users, Zap } from "lucide-react";
 import { Badge } from "~~/components/ui/badge";
@@ -75,9 +76,11 @@ const Index = () => {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="mb-8 flex justify-center">
-              <img
-                src="/lovable-uploads/ff9e9ae3-e1b0-4702-a303-16ccfceae9c9.png"
+              <Image
+                src="/images/prospex-logo-light.png"
                 alt="Prospex Logo"
+                width={256}
+                height={256}
                 className="w-48 h-48 md:w-64 md:h-64 object-contain"
               />
             </div>

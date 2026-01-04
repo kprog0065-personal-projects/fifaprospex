@@ -14,14 +14,15 @@ const AppHeader = () => {
   const navItems = [
     { name: "Home", path: "/" },
     { name: "Marketplace", path: "/marketplace" },
-    { name: "DeFi Features", path: "/defi" },
+    { name: "DeFi Features", path: "/defi_features" },
     { name: "Fantasy Football", path: "/fantasy" },
     { name: "Community", path: "/community" },
   ];
 
   const profileItems = [
-    { name: "Athlete Profile", path: "/athlete/1" },
-    { name: "Full Athlete NFT", path: "/athlete/1/nft" },
+    { name: "Investor Profile", path: "/select_profile/investor_profile" },
+    { name: "Athlete Profile", path: "/select_profile/athlete_profile" },
+    // { name: "Full Athlete NFT", path: "/athlete/1/nft" },
     { name: "Trainer Profile", path: "/trainer" },
     { name: "Scout Profile", path: "/scout" },
   ];
@@ -55,15 +56,22 @@ const AppHeader = () => {
             {/* Select Profile Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="text-sm font-medium text-gray-600 hover:text-[#E84142]">
+                <button className="text-sm font-medium text-gray-600 hover:text-[#E84142] transition-colors bg-transparent border-none cursor-pointer flex items-center">
                   Select Profile
                   <ChevronDown className="w-4 h-4 ml-1" />
-                </Button>
+                </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuContent align="end" className="w-48 bg-white border border-gray-200">
                 {profileItems.map(profile => (
-                  <DropdownMenuItem key={profile.name} asChild>
-                    <Link href={profile.path} className="w-full">
+                  <DropdownMenuItem
+                    key={profile.name}
+                    asChild
+                    className="focus:bg-gray-100 focus:text-gray-700 focus-visible:bg-gray-100"
+                  >
+                    <Link
+                      href={profile.path}
+                      className="w-full text-gray-700 hover:text-[#E84142] hover:bg-gray-100 cursor-pointer focus:outline-none focus-visible:outline-none"
+                    >
                       {profile.name}
                     </Link>
                   </DropdownMenuItem>
