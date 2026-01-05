@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "./ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { ChevronDown, Menu, User, Wallet } from "lucide-react";
 
 const AppHeader = () => {
@@ -82,12 +83,97 @@ const AppHeader = () => {
 
           {/* Right side buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Link href="/wallet">
-              <Button variant="outline" size="sm" className="rounded-full">
-                <Wallet className="w-4 h-4 mr-2" />
-                Wallet
-              </Button>
-            </Link>
+            {/* RainbowKit Wallet Button */}
+            <ConnectButton.Custom>
+              {({ account, chain, openAccountModal, openChainModal, openConnectModal, mounted }) => {
+                const ready = mounted;
+                const connected = ready && account && chain;
+
+                return (
+                  <div
+                    {...(!ready && {
+                      "aria-hidden": true,
+                      style: {
+                        opacity: 0,
+                        pointerEvents: "none",
+                        userSelect: "none",
+                      },
+                    })}
+                  >
+                    {(() => {
+                      if (!connected) {
+                        return (
+                          <Button
+                            onClick={openConnectModal}
+                            className="bg-[#0066B3] hover:bg-[#0066B3]/90 text-white rounded-full"
+                            size="sm"
+                          >
+                            <Wallet className="w-4 h-4 mr-2" />
+                            Wallet
+                          </Button>
+                        );
+                      }
+
+                      if (chain.unsupported) {
+                        return (
+                          <Button
+                            onClick={openChainModal}
+                            className="bg-red-500 hover:bg-red-600 text-white rounded-full"
+                            size="sm"
+                          >
+                            Wrong Network
+                          </Button>
+                        );
+                      }
+
+                      return (
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={openChainModal}
+                            variant="outline"
+                            size="sm"
+                            className="rounded-full border-[#0066B3] text-[#0066B3] hover:bg-[#0066B3] hover:text-white"
+                          >
+                            {chain.hasIcon && (
+                              <div
+                                style={{
+                                  background: chain.iconBackground,
+                                  width: 16,
+                                  height: 16,
+                                  borderRadius: 999,
+                                  overflow: "hidden",
+                                  marginRight: 8,
+                                }}
+                              >
+                                {chain.iconUrl && (
+                                  <img
+                                    alt={chain.name ?? "Chain icon"}
+                                    src={chain.iconUrl}
+                                    style={{ width: 16, height: 16 }}
+                                  />
+                                )}
+                              </div>
+                            )}
+                            {chain.name}
+                          </Button>
+
+                          <Button
+                            onClick={openAccountModal}
+                            className="bg-[#0066B3] hover:bg-[#0066B3]/90 text-white rounded-full"
+                            size="sm"
+                          >
+                            <Wallet className="w-4 h-4 mr-2" />
+                            {account.displayName}
+                          </Button>
+                        </div>
+                      );
+                    })()}
+                  </div>
+                );
+              }}
+            </ConnectButton.Custom>
+
+            {/* Sign In Button */}
             <Link href="/login">
               <Button className="bg-[#E84142] hover:bg-[#E84142]/90 rounded-full">
                 <User className="w-4 h-4 mr-2" />
