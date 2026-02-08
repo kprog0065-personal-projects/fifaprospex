@@ -1,5 +1,6 @@
 // app/defi_features/pathway/page.tsx
 import Link from "next/link";
+import { PurchaseVaultShares } from "~~/components/PurchaseVaultShares";
 
 export default function PathwayPoolPage() {
   return (
@@ -39,120 +40,44 @@ export default function PathwayPoolPage() {
               </Link>{" "}
               / <span className="text-slate-300">Pathway Pool</span>
             </div>
-            <div className="flex flex-wrap items-center justify-between gap-3">
+
+            <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <h1 className="text-xl font-semibold tracking-tight">Pathway Pool</h1>
+                <h1 className="text-xl font-semibold tracking-tight">Pathway Pool (U14)</h1>
                 <p className="mt-1 max-w-xl text-xs text-slate-300">
-                  Medium‑risk pool that funds cross‑border academies, visas, education, housing and travel for combines.
-                  Capital supports players who are ready to step from local programs into professional pathways.
+                  Medium-risk pool supporting selected U14 academy players on Canada/CPL pathways. Ongoing yield comes
+                  from stablecoin strategies; additional upside (if it happens) comes from transfer-event cashflows
+                  distributed via a separate waterfall.
                 </p>
               </div>
-              <div className="flex flex-col items-end gap-1 text-xs">
-                <div className="inline-flex items-center gap-2 rounded-full bg-amber-950/60 px-3 py-1 text-amber-300 ring-1 ring-amber-700/60">
-                  <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
-                  <span className="font-medium">Medium Risk</span>
-                </div>
-                <p className="text-[11px] text-slate-400">
-                  Longer lockups and performance exposure across multiple academies and clubs.
-                </p>
-              </div>
+
+              <MediumRiskBadge />
+            </div>
+
+            <div className="rounded-lg border border-slate-800 bg-slate-950/40 p-3">
+              <p className="text-[11px] font-semibold text-slate-200">Important</p>
+              <p className="mt-1 text-[11px] leading-snug text-slate-400">
+                Vault shares are priced at NAV (net asset value) and can change over time. Liquidity is provided via
+                scheduled, limited repurchase offers after lockup; if a repurchase window is oversubscribed, fills are
+                generally pro‑rata. [web:18]
+              </p>
             </div>
           </div>
 
           {/* Pool stats */}
-          <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-4 shadow-sm">
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-300">Pool snapshot</h2>
-            <div className="mt-3 grid grid-cols-2 gap-4 md:grid-cols-4">
-              <Stat
-                label="Current APY (illustrative)"
-                value="6.1%"
-                caption="Target net annualized yield (not guaranteed)."
-              />
-              <Stat
-                label="Lockup"
-                value="12–24 months"
-                caption="Semi‑annual redemption windows, subject to liquidity."
-              />
-              <Stat label="Pool size" value="C$4.8M" caption="Target initial AUM across regions." />
-              <Stat label="Athletes supported" value="65" caption="Players in cross‑border cohorts per cycle." />
-            </div>
-          </section>
+          <PoolSnapshot />
+
+          {/* Distributions & Liquidity */}
+          <DistributionsAndLiquidity />
 
           {/* Use of proceeds */}
-          <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-300">Use of proceeds</h2>
-            <p className="mt-2 text-xs text-slate-300">
-              Pathway capital unlocks cross‑border movement for the most promising players. Funding flows into
-              structured services and contracts, never direct cash to athletes.
-            </p>
+          <UseOfProceeds />
 
-            <div className="mt-3 grid gap-3 md:grid-cols-2">
-              <UseItem
-                title="Academy & education (40%)"
-                items={[
-                  "Tuition and fees at partner academies in Canada, US, and Europe.",
-                  "School support and remote learning for players on the move.",
-                  "Language, life‑skills and transition programs.",
-                ]}
-              />
-              <UseItem
-                title="Visas, housing & travel (35%)"
-                items={[
-                  "Visa processing, legal support and insurance.",
-                  "Safe housing close to training centers.",
-                  "Flights and ground travel for combines and trials.",
-                ]}
-              />
-              <UseItem
-                title="Club & combine operations (15%)"
-                items={[
-                  "Cross‑border tournaments and showcase events.",
-                  "Data capture, scouting infrastructure and medical screening.",
-                ]}
-              />
-              <UseItem
-                title="Liquidity & platform (10%)"
-                items={["Treasury assets for liquidity management.", "Compliance, governance and on‑chain reporting."]}
-              />
-            </div>
-          </section>
-
-          {/* Yield breakdown */}
-          <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-300">Where yield comes from</h2>
-            <div className="mt-2 grid gap-4 md:grid-cols-3">
-              <YieldItem
-                title="Service savings & margins"
-                value="~2.5% p.a."
-                description="Negotiated rates with academies, housing partners and travel providers; part of the savings are shared with the pool."
-              />
-              <YieldItem
-                title="Club & event revenue"
-                value="~2.1% p.a."
-                description="Revenue shares from combines, friendly matches, sponsorships and tourism packages linked to Pathway cohorts."
-              />
-              <YieldItem
-                title="Treasury yield"
-                value="~1.5% p.a."
-                description="CAD‑denominated low‑risk instruments for unallocated cash to stabilize returns."
-              />
-            </div>
-          </section>
+          {/* How Returns Work */}
+          <HowReturnsWork />
 
           {/* Impact metrics */}
-          <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-300">Impact & reporting</h2>
-            <p className="mt-2 text-xs text-slate-300">
-              Pathway cohorts are tracked from local foundations into cross‑border environments, with transparent
-              ledgers for minutes, trials, contracts and educational progress.
-            </p>
-
-            <div className="mt-3 grid gap-4 md:grid-cols-3">
-              <ImpactItem label="Average cost / athlete / year" value="C$18,000" />
-              <ImpactItem label="Target cohorts per year" value="3–5 cross‑border groups" />
-              <ImpactItem label="Primary corridors" value="Caribbean → Canada / US / Europe" />
-            </div>
-          </section>
+          <ImpactMetrics />
         </section>
 
         {/* RIGHT COLUMN */}
@@ -161,88 +86,61 @@ export default function PathwayPoolPage() {
           <RiskDisclosure />
         </aside>
       </div>
-
-      {/* Shared sections (same as your snippet) */}
-      <section className="mb-12 mt-4 rounded-2xl bg-white border border-slate-100 p-6 shadow-sm text-slate-900">
-        <h2 className="text-lg font-semibold mb-1">Where Fund Yield Comes From</h2>
-        <p className="text-sm text-slate-600 mb-4">
-          Athlete funds earn return from real‑world activity, not pure token speculation.
-        </p>
-
-        <div className="space-y-4 text-slate-800">
-          <div className="flex gap-3">
-            <div className="mt-1 text-xl">💪</div>
-            <div>
-              <p className="text-sm font-semibold text-slate-900">Service Discounts</p>
-              <p className="text-xs text-slate-600">
-                Aggregated discounts on gyms, housing, travel, and academy fees are captured as economic value and
-                shared with fund investors.
-              </p>
-            </div>
-          </div>
-          <div className="flex gap-3">
-            <div className="mt-1 text-xl">🎟️</div>
-            <div>
-              <p className="text-sm font-semibold text-slate-900">Club &amp; Tourism Revenue</p>
-              <p className="text-xs text-slate-600">
-                Shares of tickets, sponsorships, prize money, and CONCACAF‑ linked tourism packages flow back into the
-                pools.
-              </p>
-            </div>
-          </div>
-          <div className="flex gap-3">
-            <div className="mt-1 text-xl">🏦</div>
-            <div>
-              <p className="text-sm font-semibold text-slate-900">Treasury Yield</p>
-              <p className="text-xs text-slate-600">
-                Unallocated cash is held in CAD‑denominated stablecoins and low‑risk bank products to earn a
-                conservative base yield.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="mb-12 rounded-2xl bg-slate-900 text-slate-50 p-6">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <h2 className="text-lg font-semibold mb-1">Risk &amp; Policy</h2>
-            <p className="text-xs opacity-80 max-w-2xl">
-              Athlete development funds are long‑horizon vehicles. Capital is not guaranteed and returns depend on
-              service usage, club performance, and treasury yields. All investors must complete KYC / AML before
-              subscribing.
-            </p>
-          </div>
-          <div className="flex gap-3 text-xs">
-            <button className="rounded-full border border-slate-500 px-4 py-2 hover:bg-slate-800 transition">
-              View Legal Structure
-            </button>
-            <button className="rounded-full border border-slate-500 px-4 py-2 hover:bg-slate-800 transition">
-              Download Reporting Sample
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <section className="mb-8 flex flex-col md:flex-row items-center justify-center gap-4">
-        <Link
-          href="/defi_features"
-          className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-8 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 transition"
-        >
-          Launch DeFi Dashboard
-        </Link>
-        <Link
-          href="/book-demo"
-          className="inline-flex items-center justify-center rounded-full border border-indigo-600 px-8 py-3 text-sm font-semibold text-indigo-600 hover:bg-indigo-50 transition"
-        >
-          Book a Bank Demo
-        </Link>
-      </section>
     </main>
   );
 }
 
-/* ------- small subcomponents ------- */
+/* ------- Components ------- */
+
+function MediumRiskBadge() {
+  return (
+    <div className="flex flex-col items-end gap-1 text-xs">
+      <div className="inline-flex items-center gap-2 rounded-full bg-amber-950/60 px-3 py-1 text-amber-300 ring-1 ring-amber-700/60">
+        <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
+        <span className="font-medium">Medium Risk</span>
+      </div>
+      <p className="text-[11px] text-slate-400">Balanced risk-return profile with scheduled liquidity.</p>
+    </div>
+  );
+}
+
+function PoolSnapshot() {
+  return (
+    <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-4 shadow-sm">
+      <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-300">Pool snapshot</h2>
+
+      <div className="mt-3 grid grid-cols-2 gap-4 md:grid-cols-4">
+        <Stat label="Target base APY (variable)" value="8%" caption="Stablecoin yield target; not guaranteed." />
+        <Stat
+          label="Quarterly liquidity"
+          value="Up to 5%/qtr"
+          caption="Repurchase offers after lockup; pro‑rata if oversubscribed."
+        />
+        <Stat label="Lockup" value="5 years" caption="No repurchases during lockup." />
+        <Stat label="Share pricing" value="NAV" caption="Vault share price floats; not fixed token price." />
+      </div>
+
+      <div className="mt-4 rounded-lg border border-slate-800/80 bg-slate-950/40 p-3">
+        <p className="text-[11px] font-semibold text-slate-200">Two flows (kept separate)</p>
+        <div className="mt-2 grid gap-2 md:grid-cols-2">
+          <div className="rounded-lg border border-slate-800/80 bg-slate-950/40 p-3">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-200">Ongoing distributions</p>
+            <p className="mt-1 text-[11px] leading-snug text-slate-300">
+              From SPV net cashflow after a 12‑month cost reserve is satisfied; DRIP by default with optional stablecoin
+              payout elections.
+            </p>
+          </div>
+          <div className="rounded-lg border border-slate-800/80 bg-slate-950/40 p-3">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-200">Transfer events</p>
+            <p className="mt-1 text-[11px] leading-snug text-slate-300">
+              Special distributions only when cash is actually received (installments treated as multiple events).
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
 
 type StatProps = {
   label: string;
@@ -257,6 +155,101 @@ function Stat({ label, value, caption }: StatProps) {
       <p className="text-lg font-semibold text-slate-50">{value}</p>
       {caption && <p className="text-[11px] text-slate-400 leading-snug">{caption}</p>}
     </div>
+  );
+}
+
+function DistributionsAndLiquidity() {
+  return (
+    <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
+      <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-300">Distributions & liquidity</h2>
+
+      <div className="mt-3 grid gap-4 md:grid-cols-3">
+        <InfoCard
+          title="Reserve policy (demo)"
+          value="12 months"
+          description="Maintain a stablecoin reserve equal to 12 months of fixed costs before paying ongoing distributions."
+        />
+        <InfoCard
+          title="Ongoing payout policy (demo)"
+          value="50 / 50"
+          description="After reserve target is met: 50% distributed, 50% retained for reinvestment/working capital."
+        />
+        <InfoCard
+          title="Repurchase offers"
+          value="Quarterly"
+          description="Offer up to 5% of outstanding shares per tier each window; if requests exceed the limit, fills are generally pro‑rata."
+        />
+      </div>
+
+      <div className="mt-4 rounded-lg border border-slate-800/80 bg-slate-950/40 p-3">
+        <p className="text-[11px] font-semibold text-slate-200">Why repurchases are limited</p>
+        <p className="mt-1 text-[11px] leading-snug text-slate-400">
+          Interval-fund style repurchase offers are periodic and limited (often 5%–25% of shares) and may be pro‑rata
+          when oversubscribed, which helps prevent a “run on the fund.” [web:18]
+        </p>
+      </div>
+    </section>
+  );
+}
+
+type InfoCardProps = {
+  title: string;
+  value: string;
+  description: string;
+};
+
+function InfoCard({ title, value, description }: InfoCardProps) {
+  return (
+    <div className="rounded-lg border border-slate-800/80 bg-slate-950/40 p-3">
+      <div className="flex items-baseline justify-between gap-3">
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-200">{title}</p>
+        <p className="text-sm font-semibold text-amber-200">{value}</p>
+      </div>
+      <p className="mt-2 text-[11px] leading-snug text-slate-300">{description}</p>
+    </div>
+  );
+}
+
+function UseOfProceeds() {
+  return (
+    <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
+      <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-300">Use of proceeds</h2>
+      <p className="mt-2 text-xs text-slate-300">
+        Pathway Pool funds essential support for top U14 academy players transitioning to Canada/CPL academies. Capital
+        covers cross-border logistics, education, housing integration supports, and player development services.
+      </p>
+
+      <div className="mt-3 grid gap-3 md:grid-cols-2">
+        <UseItem
+          title="Academy & education (35%)"
+          items={[
+            "Partner academy tuition and training support (example partners; not guaranteed)",
+            "School enrollment & education support in Canada",
+            "Coaching, analysis, and player development services",
+          ]}
+        />
+        <UseItem
+          title="Diaspora housing & integration (30%)"
+          items={[
+            "Billet family housing and settlement supports (structure varies by location)",
+            "Cultural adjustment mentorship",
+            "Community connection programs",
+          ]}
+        />
+        <UseItem
+          title="Cross-border logistics (20%)"
+          items={["Visa/study permit support", "Flights and initial travel", "Health insurance and medical screening"]}
+        />
+        <UseItem
+          title="Liquidity & platform (15%)"
+          items={[
+            "Stablecoin reserve buffer for ops + repurchase windows",
+            "Reporting & investor dashboards",
+            "Compliance workstreams (as applicable per jurisdiction)",
+          ]}
+        />
+      </div>
+    </section>
   );
 }
 
@@ -281,13 +274,43 @@ function UseItem({ title, items }: UseItemProps) {
   );
 }
 
-type YieldItemProps = {
+function HowReturnsWork() {
+  return (
+    <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
+      <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-300">How returns work</h2>
+      <p className="mt-2 text-xs text-slate-300">
+        Ongoing distributions and transfer events are separate flows. Repurchase windows are the primary liquidity
+        mechanism after lockup.
+      </p>
+
+      <div className="mt-3 grid gap-4 md:grid-cols-3">
+        <ReturnItem
+          title="Ongoing yield (income)"
+          value="DRIP default"
+          description="Ongoing distributions are funded from SPV net cashflow after reserves. By default, distributions compound into NAV; investors can elect stablecoin payout during windows."
+        />
+        <ReturnItem
+          title="Transfer events (upside)"
+          value="50/30/20"
+          description="Special distributions use the tier waterfall: Pathway participates in the Academy bucket (30% of transfer-event distributions), paid only when cash is received."
+        />
+        <ReturnItem
+          title="Liquidity path"
+          value="Repurchase offers"
+          description="After lockup: quarterly repurchase offers up to 5% per tier at NAV; if oversubscribed, fills are generally pro‑rata."
+        />
+      </div>
+    </section>
+  );
+}
+
+type ReturnItemProps = {
   title: string;
   value: string;
   description: string;
 };
 
-function YieldItem({ title, value, description }: YieldItemProps) {
+function ReturnItem({ title, value, description }: ReturnItemProps) {
   return (
     <div className="rounded-lg border border-slate-800/80 bg-slate-950/40 p-3">
       <div className="flex items-baseline justify-between">
@@ -296,6 +319,24 @@ function YieldItem({ title, value, description }: YieldItemProps) {
       </div>
       <p className="mt-2 text-[11px] text-slate-300 leading-snug">{description}</p>
     </div>
+  );
+}
+
+function ImpactMetrics() {
+  return (
+    <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
+      <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-300">Impact & reporting</h2>
+      <p className="mt-2 text-xs text-slate-300">
+        Vault shares represent pro‑rata exposure to the Pathway cohort. Reporting focuses on funded services, player
+        progress checkpoints, and aggregated cohort outcomes.
+      </p>
+
+      <div className="mt-3 grid gap-4 md:grid-cols-3">
+        <ImpactItem label="Players per cohort" value="24 U14 athletes" />
+        <ImpactItem label="Pathway target" value="Canada/CPL academy placement" />
+        <ImpactItem label="Regions in scope" value="Caribbean, Central America, Canadian diaspora" />
+      </div>
+    </section>
   );
 }
 
@@ -317,62 +358,32 @@ function SubscribeCard() {
   return (
     <section className="space-y-4 rounded-xl border border-slate-800 bg-slate-900/70 p-4 shadow-lg">
       <div className="flex items-center justify-between">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-300">Subscribe</p>
-        <span className="rounded-full bg-slate-800 px-2 py-0.5 text-[10px] text-slate-300">Pathway Pool</span>
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-300">Purchase Vault Shares</p>
+        <span className="rounded-full bg-amber-900/50 px-2 py-0.5 text-[10px] text-amber-300 ring-1 ring-amber-700/50">
+          Pathway Pool
+        </span>
       </div>
 
       <p className="text-xs text-slate-300">
-        Indicate a non‑binding interest amount. Final subscriptions are subject to KYC/AML approval and offering
-        documents.
+        Connect your wallet to deposit CAD and receive vault shares representing ownership in the Pathway Pool (U14).
       </p>
 
-      <form className="space-y-3">
-        <div className="space-y-1">
-          <label htmlFor="amount" className="text-[11px] font-medium text-slate-200">
-            Indicative amount (CAD)
-          </label>
-          <input
-            id="amount"
-            type="number"
-            min={10000}
-            step={1000}
-            placeholder="C$25,000"
-            className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-50 outline-none placeholder:text-slate-500 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400"
-          />
-          <p className="text-[11px] text-slate-400">Minimum C$10,000; multiples of C$1,000.</p>
-        </div>
+      {/* Keep tile unchanged */}
+      <PurchaseVaultShares pool="pathway" minDeposit={1500} />
 
-        <div className="space-y-1">
-          <label htmlFor="email" className="text-[11px] font-medium text-slate-200">
-            Contact email
-          </label>
-          <input
-            id="email"
-            type="email"
-            placeholder="you@institution.com"
-            className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-50 outline-none placeholder:text-slate-500 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400"
-          />
-        </div>
-
-        <label className="flex items-start gap-2 text-[11px] text-slate-300">
-          <input type="checkbox" className="mt-0.5 h-3 w-3 rounded border-slate-700 bg-slate-900 text-indigo-500" />
-          <span>
-            I confirm this expression of interest is non‑binding and I agree to receive offering documents and KYC
-            instructions.
-          </span>
-        </label>
-
-        <button
-          type="submit"
-          className="flex w-full items-center justify-center rounded-lg bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 disabled:cursor-not-allowed disabled:bg-slate-700"
-        >
-          Submit interest
-        </button>
-      </form>
+      <div className="rounded-lg bg-slate-950/80 border border-slate-800 p-3">
+        <p className="text-[11px] font-semibold text-slate-300 mb-1">How it works</p>
+        <ol className="space-y-1 text-[11px] text-slate-400">
+          <li>1. Connect wallet (MetaMask recommended)</li>
+          <li>2. Get test CAD from faucet (demo only)</li>
+          <li>3. Approve CAD spending</li>
+          <li>4. Deposit to receive vault shares</li>
+        </ol>
+      </div>
 
       <p className="text-[11px] text-slate-400">
-        This page is for illustrative purposes only and does not constitute an offer to sell or a solicitation of an
-        offer to buy any security. Any offering will be made via formal documentation in permitted jurisdictions.
+        Demo environment using ERC‑4626 vaults. Production requires KYC/AML and formal offering documents in permitted
+        jurisdictions.
       </p>
     </section>
   );
@@ -383,10 +394,12 @@ function RiskDisclosure() {
     <section className="rounded-xl border border-slate-900 bg-slate-950/80 p-3">
       <h2 className="text-[11px] font-semibold uppercase tracking-wide text-slate-300">Key risks</h2>
       <ul className="mt-2 space-y-1 text-[11px] text-slate-400">
-        <li>Capital is at risk; returns are not guaranteed.</li>
-        <li>Longer lockups mean you may not withdraw during the full 12–24 month term.</li>
-        <li>Yields depend on academy demand, club revenue and cross‑border logistics.</li>
-        <li>Regulatory changes in Canada or partner countries may affect pool structure.</li>
+        <li>Athlete outcomes are uncertain; loss of capital is possible.</li>
+        <li>
+          Long lockup; liquidity is via scheduled repurchase offers and may be pro‑rata if oversubscribed. [web:18]
+        </li>
+        <li>“APY” targets are variable and not guaranteed; NAV may decline.</li>
+        <li>Cross-border execution, eligibility, and regulatory changes can affect outcomes and distributions.</li>
       </ul>
     </section>
   );

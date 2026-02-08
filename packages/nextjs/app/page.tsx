@@ -83,7 +83,7 @@ const Index = () => {
                 height={256}
                 className="w-48 h-48 md:w-64 md:h-64 object-contain"
               />
-              <h1 className="text-5xl md:text-7xl font-bold text-[#0066B3] tracking-tight">Prospex</h1>
+              <h1 className="text-5xl md:text-7xl font-bold text-[#003D5C] tracking-tight">Prospex</h1>
             </div>
             <p className="text-xl md:text-2xl text-gray-700 mb-4 max-w-4xl mx-auto">
               Redefining Football Talent Development, Investment, and Fan Engagement

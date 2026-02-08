@@ -8,24 +8,28 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
  * @title PoolVault
- * @dev ERC-4626 compliant vault for athlete development pools
- * Users deposit stablecoin (or ETH), receive vault shares representing pool ownership
+ * @dev ERC-4626 vault for athlete pools (mCAD in/out).
+ * Demo policy:
+ * - NAV is increased by transferring mCAD directly into the vault (donation-style).
+ * - Repurchases/lockups are handled by an external RepurchaseManager (optional gating via maxRedeem/maxWithdraw).
  */
 contract PoolVault is ERC4626, Ownable {
-    // Minimum deposit amounts in underlying asset (wei)
     uint256 public immutable MIN_DEPOSIT;
-    
-    // Pool metadata
-    string public poolType; // "Foundation", "Pathway", "ProPath"
+
+    // Metadata
+    string public poolType; // "Foundation" | "Academy" | "Pro"
     uint256 public cohortYear;
-    
-    // Distribution tracking
-    uint256 public totalDistributed;
-    mapping(address => uint256) public lastClaimedDistribution;
-    
-    event DistributionAdded(uint256 amount, uint256 timestamp);
-    event ProfitsDistributed(address indexed recipient, uint256 amount);
-    
+
+    // Optional: repurchase/lockup gating (kept very simple for demo)
+    address public repurchaseManager;
+    uint64 public lockupEndsAt; // unix timestamp; 0 means no lockup
+
+    uint256 public maxCapAssets; // 0 means uncapped
+    event MaxCapSet(uint256 maxCapAssets);
+
+    event RepurchaseManagerSet(address indexed manager);
+    event LockupSet(uint64 indexed endsAt);
+
     constructor(
         IERC20 asset_,
         string memory name_,
@@ -38,58 +42,58 @@ contract PoolVault is ERC4626, Ownable {
         cohortYear = cohortYear_;
         MIN_DEPOSIT = minDeposit_;
     }
-    
-    /**
-     * @dev Override deposit to enforce minimum
-     */
-    function deposit(uint256 assets, address receiver) 
-        public 
-        override 
-        returns (uint256) 
-    {
+
+    function setPoolType(string calldata poolType_) external onlyOwner {
+        poolType = poolType_;
+    }
+
+    function setCohortYear(uint256 cohortYear_) external onlyOwner {
+        cohortYear = cohortYear_;
+    }
+
+    function setRepurchaseManager(address manager) external onlyOwner {
+        repurchaseManager = manager;
+        emit RepurchaseManagerSet(manager);
+    }
+
+    function setLockupEndsAt(uint64 endsAt) external onlyOwner {
+        lockupEndsAt = endsAt;
+        emit LockupSet(endsAt);
+    }
+
+    function setMaxCapAssets(uint256 cap) external onlyOwner {
+        maxCapAssets = cap;
+        emit MaxCapSet(cap);
+    }
+
+    /// @dev Enforce min deposit.
+    function deposit(uint256 assets, address receiver) public override returns (uint256) {
         require(assets >= MIN_DEPOSIT, "Below minimum deposit");
+        if (maxCapAssets != 0) {
+            require(totalAssets() + assets <= maxCapAssets, "Cap reached");
+        }
         return super.deposit(assets, receiver);
     }
-    
-    /**
-     * @dev Owner adds transfer proceeds to vault (increases share value)
-     */
-    function addDistribution() external payable onlyOwner {
-        require(msg.value > 0, "Must send ETH");
-        totalDistributed += msg.value;
-        emit DistributionAdded(msg.value, block.timestamp);
+
+    /// @dev Enforce min mint too (optional but keeps UX consistent).
+    function mint(uint256 shares, address receiver) public override returns (uint256) {
+        uint256 assets = previewMint(shares);
+        require(assets >= MIN_DEPOSIT, "Below minimum deposit");
+        if (maxCapAssets != 0) {
+            require(totalAssets() + assets <= maxCapAssets, "Cap reached");
+        }
+        return super.mint(shares, receiver);
     }
-    
-    /**
-     * @dev Calculate pending profits for a share holder
-     */
-    function pendingProfits(address account) public view returns (uint256) {
-        uint256 shares = balanceOf(account);
-        if (shares == 0) return 0;
-        
-        uint256 totalShares = totalSupply();
-        uint256 accountShare = (totalDistributed * shares) / totalShares;
-        
-        return accountShare - lastClaimedDistribution[account];
+
+    /// @dev Simple gating: no redeem/withdraw during lockup.
+    /// For the demo we keep window logic inside RepurchaseManager; vault only blocks before lockup end.
+    function maxRedeem(address owner) public view override returns (uint256) {
+        if (lockupEndsAt != 0 && block.timestamp < lockupEndsAt) return 0;
+        return super.maxRedeem(owner);
     }
-    
-    /**
-     * @dev Claim accumulated profits
-     */
-    function claimProfits() external {
-        uint256 profits = pendingProfits(msg.sender);
-        require(profits > 0, "No profits to claim");
-        
-        lastClaimedDistribution[msg.sender] += profits;
-        
-        (bool success, ) = msg.sender.call{value: profits}("");
-        require(success, "Transfer failed");
-        
-        emit ProfitsDistributed(msg.sender, profits);
+
+    function maxWithdraw(address owner) public view override returns (uint256) {
+        if (lockupEndsAt != 0 && block.timestamp < lockupEndsAt) return 0;
+        return super.maxWithdraw(owner);
     }
-    
-    /**
-     * @dev Allow vault to receive ETH (for distributions)
-     */
-    receive() external payable {}
 }

@@ -1,5 +1,6 @@
 // app/funds/foundation/page.tsx
 import Link from "next/link";
+import { PurchaseVaultShares } from "~~/components/PurchaseVaultShares";
 
 export default function FoundationPoolPage() {
   return (
@@ -29,7 +30,7 @@ export default function FoundationPoolPage() {
       </header>
 
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-6 lg:flex-row">
-        {/* LEFT COLUMN: Overview + Use of Proceeds + Metrics */}
+        {/* LEFT COLUMN */}
         <section className="flex-1 space-y-6">
           {/* Breadcrumb + Title */}
           <div className="space-y-2">
@@ -39,33 +40,46 @@ export default function FoundationPoolPage() {
               </Link>{" "}
               / <span className="text-slate-300">Foundation Pool</span>
             </div>
-            <div className="flex flex-wrap items-center justify-between gap-3">
+
+            <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <h1 className="text-xl font-semibold tracking-tight">Foundation Pool</h1>
+                <h1 className="text-xl font-semibold tracking-tight">Foundation Pool (U12)</h1>
                 <p className="mt-1 max-w-xl text-xs text-slate-300">
-                  Stable, low‑risk pool that finances local training, gyms, coaching, nutrition and basic services for
-                  U‑10 to U‑13 cohorts. Capital is deployed into short‑cycle development blocks, not direct cash to
-                  players.
+                  High-risk, long-duration pool funding early athlete development. Ongoing yield comes from stablecoin
+                  strategies; major upside (if it happens) comes from transfer-event cashflows distributed via a
+                  separate waterfall.
                 </p>
               </div>
               <RiskBadge />
             </div>
+
+            <div className="rounded-lg border border-slate-800 bg-slate-950/40 p-3">
+              <p className="text-[11px] font-semibold text-slate-200">Important</p>
+              <p className="mt-1 text-[11px] leading-snug text-slate-400">
+                Vault shares are priced at NAV (net asset value) and can change over time. Liquidity is scheduled via
+                limited repurchase windows after lockup—not a continuous secondary market. Repurchase requests may be
+                filled pro‑rata if oversubscribed.
+              </p>
+            </div>
           </div>
 
-          {/* Pool Stats Card */}
+          {/* Pool Stats */}
           <PoolStats />
+
+          {/* Distributions & Liquidity */}
+          <DistributionsAndLiquidity />
 
           {/* Use of Proceeds */}
           <UseOfProceeds />
 
-          {/* Yield Explanation */}
-          <YieldBreakdown />
+          {/* How Returns Work */}
+          <ReturnsBreakdown />
 
-          {/* Impact Metrics */}
+          {/* Impact */}
           <ImpactMetrics />
         </section>
 
-        {/* RIGHT COLUMN: Subscribe / KYC Card */}
+        {/* RIGHT COLUMN */}
         <aside className="w-full max-w-md space-y-4 lg:w-80">
           <SubscribeCard />
           <RiskDisclosure />
@@ -75,18 +89,16 @@ export default function FoundationPoolPage() {
   );
 }
 
-/* ---------- Sub‑components ---------- */
+/* ---------- Components ---------- */
 
 function RiskBadge() {
   return (
     <div className="flex flex-col items-end gap-1 text-xs">
-      <div className="inline-flex items-center gap-2 rounded-full bg-emerald-950/60 px-3 py-1 text-emerald-300 ring-1 ring-emerald-700/60">
-        <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
-        <span className="font-medium">Low Risk</span>
+      <div className="inline-flex items-center gap-2 rounded-full bg-orange-950/60 px-3 py-1 text-orange-300 ring-1 ring-orange-700/60">
+        <span className="h-2.5 w-2.5 rounded-full bg-orange-400" />
+        <span className="font-medium">High Risk</span>
       </div>
-      <p className="text-[11px] text-slate-400">
-        Short lockup, diversified across services and conservative yield instruments.
-      </p>
+      <p className="text-[11px] text-slate-400">Long lockup, limited liquidity, outcomes depend on player success.</p>
     </div>
   );
 }
@@ -95,11 +107,35 @@ function PoolStats() {
   return (
     <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-4 shadow-sm">
       <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-300">Pool snapshot</h2>
+
       <div className="mt-3 grid grid-cols-2 gap-4 md:grid-cols-4">
-        <Stat label="Current APY (illustrative)" value="3.4%" caption="Target net annualized yield (not guaranteed)." />
-        <Stat label="Lockup" value="3–6 months" caption="Quarterly redemptions, subject to liquidity." />
-        <Stat label="Pool size" value="C$2.3M" caption="Target initial AUM for pilot phase." />
-        <Stat label="Athletes supported" value="120" caption="Estimated U‑10 to U‑13 players per cycle." />
+        <Stat label="Target base APY (variable)" value="6%" caption="Stablecoin yield target; not guaranteed." />
+        <Stat
+          label="Quarterly liquidity"
+          value="Up to 5%/qtr"
+          caption="Repurchase offers after lockup; pro‑rata if oversubscribed."
+        />
+        <Stat label="Lockup" value="8 years" caption="No repurchases during lockup." />
+        <Stat label="Share pricing" value="NAV" caption="Vault share price floats; not fixed at $0.10." />
+      </div>
+
+      <div className="mt-4 rounded-lg border border-slate-800/80 bg-slate-950/40 p-3">
+        <p className="text-[11px] font-semibold text-slate-200">Two flows (kept separate)</p>
+        <div className="mt-2 grid gap-2 md:grid-cols-2">
+          <div className="rounded-lg border border-slate-800/80 bg-slate-950/40 p-3">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-200">Ongoing distributions</p>
+            <p className="mt-1 text-[11px] leading-snug text-slate-300">
+              From SPV net cashflow after a 12‑month cost reserve is satisfied; DRIP by default with optional stablecoin
+              payout elections.
+            </p>
+          </div>
+          <div className="rounded-lg border border-slate-800/80 bg-slate-950/40 p-3">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-200">Transfer events</p>
+            <p className="mt-1 text-[11px] leading-snug text-slate-300">
+              Special distributions only when cash is actually received (installments treated as multiple events).
+            </p>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -116,7 +152,59 @@ function Stat({ label, value, caption }: StatProps) {
     <div className="space-y-1">
       <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">{label}</p>
       <p className="text-lg font-semibold text-slate-50">{value}</p>
-      {caption && <p className="text-[11px] text-slate-400 leading-snug">{caption}</p>}
+      {caption && <p className="text-[11px] leading-snug text-slate-400">{caption}</p>}
+    </div>
+  );
+}
+
+function DistributionsAndLiquidity() {
+  return (
+    <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
+      <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-300">Distributions & liquidity</h2>
+
+      <div className="mt-3 grid gap-4 md:grid-cols-3">
+        <InfoCard
+          title="Reserve policy (demo)"
+          value="12 months"
+          description="Maintain a stablecoin reserve equal to 12 months of fixed costs before paying ongoing distributions."
+        />
+        <InfoCard
+          title="Ongoing payout policy (demo)"
+          value="50 / 50"
+          description="After reserve target is met: 50% distributed, 50% retained for reinvestment/working capital."
+        />
+        <InfoCard
+          title="Repurchase offers"
+          value="Quarterly"
+          description="After lockup, offer up to 5% of outstanding shares per tier each window; if requests exceed the limit, fills are pro‑rata."
+        />
+      </div>
+
+      <div className="mt-4 rounded-lg border border-slate-800/80 bg-slate-950/40 p-3">
+        <p className="text-[11px] font-semibold text-slate-200">What “pro‑rata” means</p>
+        <p className="mt-1 text-[11px] leading-snug text-slate-400">
+          If a tier offers 5% of shares this quarter but 12% of shares are tendered, each tender is partially filled so
+          the total filled equals the offer size.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+type InfoCardProps = {
+  title: string;
+  value: string;
+  description: string;
+};
+
+function InfoCard({ title, value, description }: InfoCardProps) {
+  return (
+    <div className="rounded-lg border border-slate-800/80 bg-slate-950/40 p-3">
+      <div className="flex items-baseline justify-between gap-3">
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-200">{title}</p>
+        <p className="text-sm font-semibold text-indigo-200">{value}</p>
+      </div>
+      <p className="mt-2 text-[11px] leading-snug text-slate-300">{description}</p>
     </div>
   );
 }
@@ -126,37 +214,37 @@ function UseOfProceeds() {
     <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
       <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-300">Use of proceeds</h2>
       <p className="mt-2 text-xs text-slate-300">
-        The Foundation Pool funds short, rules‑based development blocks instead of cash payments to athletes. Services
-        are delivered through vetted, local providers under transparent contracts.
+        Capital funds early-stage player development through vetted local providers. Services are delivered via
+        transparent contracts and program spend, not cash payments to players.
       </p>
 
       <div className="mt-3 grid gap-3 md:grid-cols-2">
         <UseItem
           title="Core development (50%)"
           items={[
-            "Ball‑skill and futsal blocks for U‑10 to U‑13 players.",
-            "Local coaching, gym access and recovery sessions.",
-            "Basic nutrition support (meals, snack programs).",
+            "Training programs (ball-skill, futsal, strength & conditioning)",
+            "Professional coaching & nutrition support",
+            "Player development tracking & assessments",
           ]}
         />
         <UseItem
           title="Infrastructure & access (30%)"
           items={[
-            "Pitch rental, futsal courts and safe community facilities.",
-            "Transport stipends for families to reach sessions.",
-            "Data capture: video, GPS and objective testing.",
+            "Facility rentals (pitches, courts, safe community spaces)",
+            "Transport stipends for families (program support; not investment yield)",
+            "Performance data capture (video, GPS, testing)",
           ]}
         />
         <UseItem
           title="Liquidity & reserves (15%)"
           items={[
-            "Treasury bills, GIC‑like deposits at partner banks.",
-            "Cash buffer to honour redemptions inside lockup windows.",
+            "Stablecoin reserve buffer for ops + repurchase windows",
+            "Treasury bills / cash equivalents (where applicable)",
           ]}
         />
         <UseItem
           title="Platform & compliance (5%)"
-          items={["Regulatory, audit and local governance costs.", "On‑chain reporting and impact dashboards."]}
+          items={["Reporting & investor dashboards", "Compliance workstreams (as applicable per jurisdiction)"]}
         />
       </div>
     </section>
@@ -184,45 +272,50 @@ function UseItem({ title, items }: UseItemProps) {
   );
 }
 
-function YieldBreakdown() {
+function ReturnsBreakdown() {
   return (
     <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
-      <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-300">Where yield comes from</h2>
-      <div className="mt-2 grid gap-4 md:grid-cols-3">
-        <YieldItem
-          title="Service margin"
-          value="~1.4% p.a."
-          description="Discounts negotiated on gyms, coaching, gear and facilities; a portion of the spread is shared back to the pool."
+      <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-300">How returns work</h2>
+      <p className="mt-2 text-xs text-slate-300">
+        Returns come from (1) ongoing stablecoin strategy yield that can be DRIP’d into NAV, and (2) special
+        transfer-event distributions when cash is received.
+      </p>
+
+      <div className="mt-3 grid gap-4 md:grid-cols-3">
+        <ReturnItem
+          title="Ongoing yield (income)"
+          value="DRIP default"
+          description="Ongoing distributions are funded from SPV net cashflow after reserves. By default, distributions compound into NAV; investors can elect stablecoin payout during windows."
         />
-        <YieldItem
-          title="Treasury yield"
-          value="~1.5% p.a."
-          description="Short‑dated government and bank instruments held in Canadian dollars at regulated partners."
+        <ReturnItem
+          title="Transfer events (upside)"
+          value="50/30/20"
+          description="Special distributions use a tier waterfall: Foundation 50%, Academy 30%, Pro 20%. Installments are treated as separate events when cash arrives."
         />
-        <YieldItem
-          title="Operational efficiency"
-          value="~0.5% p.a."
-          description="Shared savings from standardized scheduling, group travel and bulk procurement across cohorts."
+        <ReturnItem
+          title="Liquidity path"
+          value="Repurchase windows"
+          description="After lockup: quarterly repurchase offers up to 5% per tier at NAV; if oversubscribed, fills are pro‑rata. Not a promise of full exit on demand."
         />
       </div>
     </section>
   );
 }
 
-type YieldItemProps = {
+type ReturnItemProps = {
   title: string;
   value: string;
   description: string;
 };
 
-function YieldItem({ title, value, description }: YieldItemProps) {
+function ReturnItem({ title, value, description }: ReturnItemProps) {
   return (
     <div className="rounded-lg border border-slate-800/80 bg-slate-950/40 p-3">
       <div className="flex items-baseline justify-between">
         <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-200">{title}</p>
-        <p className="text-sm font-semibold text-emerald-300">{value}</p>
+        <p className="text-sm font-semibold text-orange-300">{value}</p>
       </div>
-      <p className="mt-2 text-[11px] text-slate-300 leading-snug">{description}</p>
+      <p className="mt-2 text-[11px] leading-snug text-slate-300">{description}</p>
     </div>
   );
 }
@@ -232,13 +325,13 @@ function ImpactMetrics() {
     <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
       <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-300">Impact & reporting</h2>
       <p className="mt-2 text-xs text-slate-300">
-        Each athlete supported by the Foundation Pool has a transparent development ledger: sessions attended, services
-        consumed and key milestones. Families can see what has been funded; investors see anonymized cohort‑level data.
+        Transparent development tracking for each athlete: sessions attended, services consumed, and key milestones.
+        Families see what&apos;s funded; investors see anonymized cohort-level reporting.
       </p>
 
       <div className="mt-3 grid gap-4 md:grid-cols-3">
-        <ImpactItem label="Average cost / athlete / 3‑month block" value="C$750" />
-        <ImpactItem label="Minimum cohort size" value="40–60 players" />
+        <ImpactItem label="Cohort size" value="40 U12 players" />
+        <ImpactItem label="Investment model" value="Pool-based (entire cohort)" />
         <ImpactItem label="Regions in scope" value="Caribbean, Central America, Canadian diaspora" />
       </div>
     </section>
@@ -263,64 +356,32 @@ function SubscribeCard() {
   return (
     <section className="space-y-4 rounded-xl border border-slate-800 bg-slate-900/70 p-4 shadow-lg">
       <div className="flex items-center justify-between">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-300">Subscribe</p>
-        <span className="rounded-full bg-slate-800 px-2 py-0.5 text-[10px] text-slate-300">Foundation Pool</span>
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-300">Purchase Vault Shares</p>
+        <span className="rounded-full bg-orange-900/50 px-2 py-0.5 text-[10px] text-orange-300 ring-1 ring-orange-700/50">
+          Foundation Pool
+        </span>
       </div>
 
       <p className="text-xs text-slate-300">
-        Indicate a non‑binding interest amount. Final subscriptions are subject to KYC/AML approval and offering
-        documents.
+        Connect your wallet to deposit CAD and receive vault shares representing ownership in the Foundation Pool (U12).
       </p>
 
-      <form className="space-y-3">
-        <div className="space-y-1">
-          <label htmlFor="amount" className="text-[11px] font-medium text-slate-200">
-            Indicative amount (CAD)
-          </label>
-          <input
-            id="amount"
-            type="number"
-            min={1000}
-            step={500}
-            placeholder="C$10,000"
-            className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-50 outline-none ring-0 placeholder:text-slate-500 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400"
-          />
-          <p className="text-[11px] text-slate-400">Minimum C$5,000; multiples of C$500.</p>
-        </div>
+      {/* Keep tile unchanged */}
+      <PurchaseVaultShares pool="foundation" minDeposit={500} />
 
-        <div className="space-y-1">
-          <label htmlFor="email" className="text-[11px] font-medium text-slate-200">
-            Contact email
-          </label>
-          <input
-            id="email"
-            type="email"
-            placeholder="you@institution.com"
-            className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-50 outline-none ring-0 placeholder:text-slate-500 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label className="flex items-start gap-2 text-[11px] text-slate-300">
-            <input type="checkbox" className="mt-0.5 h-3 w-3 rounded border-slate-700 bg-slate-900 text-indigo-500" />
-            <span>
-              I confirm this expression of interest is non‑binding and I agree to receive offering documents and KYC
-              instructions.
-            </span>
-          </label>
-        </div>
-
-        <button
-          type="submit"
-          className="flex w-full items-center justify-center rounded-lg bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 disabled:cursor-not-allowed disabled:bg-slate-700"
-        >
-          Submit interest
-        </button>
-      </form>
+      <div className="rounded-lg border border-slate-800 bg-slate-950/80 p-3">
+        <p className="mb-1 text-[11px] font-semibold text-slate-300">How it works</p>
+        <ol className="space-y-1 text-[11px] text-slate-400">
+          <li>1. Connect wallet (MetaMask recommended)</li>
+          <li>2. Get test CAD from faucet (demo only)</li>
+          <li>3. Approve CAD spending</li>
+          <li>4. Deposit to receive vault shares</li>
+        </ol>
+      </div>
 
       <p className="text-[11px] text-slate-400">
-        This page is for **illustrative** purposes only and does not constitute an offer to sell or a solicitation of an
-        offer to buy any security. Any offering will be made via formal documentation in permitted jurisdictions.
+        Demo environment using ERC‑4626 vaults. Production requires KYC/AML and formal offering documents in permitted
+        jurisdictions.
       </p>
     </section>
   );
@@ -331,10 +392,11 @@ function RiskDisclosure() {
     <section className="rounded-xl border border-slate-900 bg-slate-950/80 p-3">
       <h2 className="text-[11px] font-semibold uppercase tracking-wide text-slate-300">Key risks</h2>
       <ul className="mt-2 space-y-1 text-[11px] text-slate-400">
-        <li>Capital is at risk; returns are not guaranteed.</li>
-        <li>Lockups and liquidity windows mean you may not withdraw on demand.</li>
-        <li>Yields depend on service demand, treasury rates and operational performance in CONCACAF markets.</li>
-        <li>Regulatory changes in Canada or partner jurisdictions may impact pool structure.</li>
+        <li>Early-stage athlete outcomes are highly uncertain; loss of capital is possible.</li>
+        <li>Long lockup; repurchases (if any) occur only in scheduled windows and may be pro‑rata.</li>
+        <li>“APY” targets are variable and not guaranteed; NAV may go down as well as up.</li>
+        <li>Returns depend on player development, transfer markets, and operational execution.</li>
+        <li>Regulatory changes may impact token structure, disclosures, or distribution mechanics.</li>
       </ul>
     </section>
   );

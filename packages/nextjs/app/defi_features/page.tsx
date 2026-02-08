@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Link from "next/link";
 
 type Tab = "funds" | "staking";
@@ -9,11 +9,12 @@ type Fund = {
   name: string;
   slug: string;
   focus: string;
-  risk: "Low" | "Medium" | "High";
+  risk: "Foundation" | "Academy" | "Pro";
   returnProfile: string;
   lockup: string;
+  targetBaseApy: string;
+  liquidity: string;
   size: string;
-  apy: string;
   athletes: number;
 };
 
@@ -21,58 +22,54 @@ const funds: Fund[] = [
   {
     name: "Foundation Pool",
     slug: "foundation_pool",
-    focus: "Local training, gyms, coaching, basic services.",
-    risk: "Low",
-    returnProfile: "Stable yield from discounts + low‑risk cash products.",
-    lockup: "3–6 months",
+    focus: "Early-stage cohort funding (U12).",
+    risk: "Foundation",
+    returnProfile: "Base yield + long-tail transfer-event upside (separate waterfall).",
+    lockup: "8 years",
+    targetBaseApy: "6% (variable)",
+    liquidity: "Quarterly repurchase offers up to 5% after lockup (pro‑rata).",
     size: "C$2.3M",
-    apy: "3.4%",
-    athletes: 120,
+    athletes: 40,
   },
   {
     name: "Pathway Pool",
     slug: "pathway_pool",
-    focus: "Cross‑border academies, visas, education, housing.",
-    risk: "Medium",
-    returnProfile: "Mixed yield from service savings + club revenue.",
-    lockup: "12–24 months",
+    focus: "Academy pathway cohort support (U14).",
+    risk: "Academy",
+    returnProfile: "Income-weighted + transfer-event upside (separate waterfall).",
+    lockup: "5 years",
+    targetBaseApy: "8% (variable)",
+    liquidity: "Quarterly repurchase offers up to 5% after lockup (pro‑rata).",
     size: "C$4.8M",
-    apy: "6.1%",
-    athletes: 65,
+    athletes: 24,
   },
   {
-    name: "Pro Path Pool",
+    name: "Pro Pool",
     slug: "pro_path",
-    focus: "Club equity, revenue share, and transfer‑linked upside.",
-    risk: "High",
-    returnProfile: "Performance‑linked upside with longer horizons.",
-    lockup: "24+ months",
+    focus: "Late-stage cohort (U18–U21) with income focus.",
+    risk: "Pro",
+    returnProfile: "Highest base yield target + scheduled liquidity; smaller transfer-event bucket.",
+    lockup: "2 years",
+    targetBaseApy: "10% (variable)",
+    liquidity: "Quarterly repurchase offers up to 5% after lockup (pro‑rata).",
     size: "C$3.1M",
-    apy: "9.8%",
-    athletes: 24,
+    athletes: 18,
   },
 ];
 
 const stakeOptions = [
-  {
-    label: "Flexible",
-    lock: "Unbond in 7 days",
-    boost: "1.0x rewards",
-  },
-  {
-    label: "6 Months",
-    lock: "Fixed for 180 days",
-    boost: "1.3x rewards",
-  },
-  {
-    label: "12 Months",
-    lock: "Fixed for 365 days",
-    boost: "1.6x rewards",
-  },
+  { label: "Flexible", lock: "Unbond in 7 days", boost: "1.0x rewards" },
+  { label: "6 Months", lock: "Fixed for 180 days", boost: "1.3x rewards" },
+  { label: "12 Months", lock: "Fixed for 365 days", boost: "1.6x rewards" },
 ];
 
 export default function DefiPage() {
   const [activeTab, setActiveTab] = useState<Tab>("funds");
+
+  const totals = useMemo(() => {
+    const totalAthletes = funds.reduce((acc, f) => acc + f.athletes, 0);
+    return { totalAthletes };
+  }, []);
 
   return (
     <main className="min-h-screen bg-slate-50">
@@ -80,10 +77,10 @@ export default function DefiPage() {
         {/* Header */}
         <header className="mb-10">
           <h1 className="text-3xl md:text-4xl font-semibold text-slate-900">DeFi Dashboard</h1>
-          <p className="mt-2 text-lg text-indigo-600">Bank‑grade tokenization for real‑world athlete development.</p>
+          <p className="mt-2 text-lg text-indigo-600">Tokenized vault shares with scheduled liquidity.</p>
           <p className="mt-3 max-w-2xl text-sm md:text-base text-slate-600">
-            Secure, compliant DeFi rails that turn fan support and sponsorship capital into structured athlete
-            development funds—built for banks, clubs, and regulators.
+            Investors hold NAV-priced vault shares. Liquidity is provided via periodic repurchase offers after lockup;
+            repurchases are limited per window and may be filled pro‑rata when oversubscribed. [web:18]
           </p>
         </header>
 
@@ -92,18 +89,27 @@ export default function DefiPage() {
           <div className="rounded-2xl bg-white border border-slate-100 p-4 shadow-sm">
             <p className="text-xs uppercase tracking-wide text-slate-500">Total Assets</p>
             <p className="mt-2 text-2xl font-semibold text-slate-900">C$10.2M</p>
+            <p className="mt-1 text-[11px] text-slate-500">Demo number.</p>
           </div>
+
           <div className="rounded-2xl bg-white border border-slate-100 p-4 shadow-sm">
-            <p className="text-xs uppercase tracking-wide text-slate-500">Blended APY</p>
-            <p className="mt-2 text-2xl font-semibold text-emerald-600">6.0%</p>
+            <p className="text-xs uppercase tracking-wide text-slate-500">Distribution Policy</p>
+            <p className="mt-2 text-2xl font-semibold text-slate-900">50 / 50</p>
+            <p className="mt-1 text-[11px] text-slate-500">After 12‑month reserve target is met.</p>
           </div>
+
           <div className="rounded-2xl bg-white border border-slate-100 p-4 shadow-sm">
             <p className="text-xs uppercase tracking-wide text-slate-500">Athletes Supported</p>
-            <p className="mt-2 text-2xl font-semibold text-slate-900">209</p>
+            <p className="mt-2 text-2xl font-semibold text-slate-900">{totals.totalAthletes}</p>
+            <p className="mt-1 text-[11px] text-slate-500">Cohort sizes (demo).</p>
           </div>
+
           <div className="rounded-2xl bg-indigo-900 border border-indigo-900 p-4 shadow-sm text-indigo-50">
-            <p className="text-xs uppercase tracking-wide opacity-80">Compliance</p>
-            <p className="mt-2 text-sm">KYC / AML enabled • CAD stablecoin rails • Custodied by regulated partners.</p>
+            <p className="text-xs uppercase tracking-wide opacity-80">Liquidity</p>
+            <p className="mt-2 text-sm">
+              Quarterly repurchase offers • Up to 5% per tier • Pro‑rata if oversubscribed.
+            </p>
+            <p className="mt-1 text-[11px] opacity-80">Modeled on interval-fund style offers. [web:18]</p>
           </div>
         </section>
 
@@ -119,7 +125,7 @@ export default function DefiPage() {
           >
             <p className="text-xs font-semibold uppercase tracking-wide">Tokenized Athlete Funds</p>
             <p className="mt-1 text-xs text-slate-600">
-              Three tiers of CAD‑denominated development pools with different risk / return profiles.
+              Three tiers with different lockups, yield targets, and special-event exposure.
             </p>
           </button>
 
@@ -142,54 +148,73 @@ export default function DefiPage() {
         {activeTab === "funds" && (
           <section className="mb-10">
             <h2 className="sr-only">Tokenized Athlete Funds</h2>
-            <div className="overflow-hidden rounded-2xl bg-white border border-slate-100 shadow-sm">
-              <div className="hidden md:grid grid-cols-7 gap-4 border-b border-slate-100 bg-slate-50 px-4 py-3 text-xs font-semibold text-slate-500">
-                <span>Fund</span>
-                <span>Focus</span>
-                <span>Risk</span>
-                <span>Current APY</span>
-                <span>Lockup</span>
-                <span>Size</span>
-                <span>Athletes</span>
+
+            <div className="mb-4 rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">How to read this table</p>
+              <ul className="mt-2 space-y-1 text-[12px] text-slate-600">
+                <li>“Target base APY” is variable and not guaranteed.</li>
+                <li>“Liquidity” is via scheduled repurchase offers after lockup; fills may be pro‑rata. [web:18]</li>
+                <li>Transfer events are paid only when cash is received (installments treated as separate events).</li>
+              </ul>
+            </div>
+
+            <div className="overflow-x-auto rounded-2xl bg-white border border-slate-100 shadow-sm">
+              {/* Desktop Table Header */}
+              <div className="hidden md:grid grid-cols-9 gap-3 border-b border-slate-100 bg-slate-50 px-6 py-3 text-xs font-semibold text-slate-500">
+                <span className="col-span-1">Fund</span>
+                <span className="col-span-1">Tier</span>
+                <span className="col-span-2">Focus</span>
+                <span className="col-span-1">Target base APY</span>
+                <span className="col-span-1">Lockup</span>
+                <span className="col-span-2">Liquidity</span>
+                <span className="col-span-1 text-right">Action</span>
               </div>
+
+              {/* Table Rows */}
               <div className="divide-y divide-slate-100">
                 {funds.map(fund => (
-                  <div key={fund.slug} className="grid grid-cols-1 md:grid-cols-7 gap-4 px-4 py-4 items-start">
-                    <div className="md:col-span-1">
+                  <div key={fund.slug} className="grid grid-cols-1 md:grid-cols-9 gap-3 px-6 py-4 items-center">
+                    {/* Fund Name */}
+                    <div className="col-span-1">
                       <p className="text-sm font-semibold text-slate-900">{fund.name}</p>
-                      <p className="mt-1 text-xs text-slate-500">{fund.returnProfile}</p>
+                      <p className="mt-0.5 text-xs text-slate-500 md:hidden">{fund.returnProfile}</p>
                     </div>
 
-                    <div className="md:col-span-1 text-xs text-slate-600">{fund.focus}</div>
-
-                    <div className="md:col-span-1">
-                      <span
-                        className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${
-                          fund.risk === "Low"
-                            ? "bg-emerald-50 text-emerald-600"
-                            : fund.risk === "Medium"
-                              ? "bg-amber-50 text-amber-600"
-                              : "bg-rose-50 text-rose-600"
-                        }`}
-                      >
-                        {fund.risk}
-                      </span>
+                    {/* Tier */}
+                    <div className="col-span-1">
+                      <TierPill tier={fund.risk} />
                     </div>
 
-                    <div className="md:col-span-1 text-sm font-semibold text-emerald-600">{fund.apy}</div>
+                    {/* Focus */}
+                    <div className="col-span-2">
+                      <span className="md:hidden text-xs font-semibold text-slate-600">Focus: </span>
+                      <span className="text-xs text-slate-600">{fund.focus}</span>
+                      <p className="mt-1 text-[11px] text-slate-500 hidden md:block">{fund.returnProfile}</p>
+                    </div>
 
-                    <div className="md:col-span-1 text-xs text-slate-600">{fund.lockup}</div>
+                    {/* Target Base APY */}
+                    <div className="col-span-1">
+                      <span className="text-sm font-semibold text-slate-900">{fund.targetBaseApy}</span>
+                      <p className="mt-0.5 text-[11px] text-slate-500">Not guaranteed.</p>
+                    </div>
 
-                    <div className="md:col-span-1 text-sm text-slate-900">{fund.size}</div>
+                    {/* Lockup */}
+                    <div className="col-span-1">
+                      <span className="text-xs text-slate-600">{fund.lockup}</span>
+                    </div>
 
-                    <div className="md:col-span-1 flex items-center justify-between md:justify-start gap-3">
-                      <span className="text-sm text-slate-700">{fund.athletes}</span>
+                    {/* Liquidity */}
+                    <div className="col-span-2">
+                      <span className="text-xs text-slate-600">{fund.liquidity}</span>
+                    </div>
 
+                    {/* Action Button */}
+                    <div className="col-span-1 flex justify-start md:justify-end">
                       <Link
                         href={`/defi_features/${fund.slug}`}
-                        className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-indigo-500"
+                        className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-indigo-500 transition-colors"
                       >
-                        View / Subscribe
+                        View
                       </Link>
                     </div>
                   </div>
@@ -252,7 +277,7 @@ export default function DefiPage() {
                   <p className="font-semibold text-slate-900 mb-1">Estimated rewards</p>
                   <p>APR: 4.5–10.0% depending on lock period.</p>
                   <p className="mt-1 text-[11px] text-slate-500">
-                    Exact rates are illustrative and will be determined by live pool activity.
+                    Exact rates are illustrative and set by live activity.
                   </p>
                 </div>
               </div>
@@ -271,39 +296,41 @@ export default function DefiPage() {
 
         {/* Yield sources explainer - always visible */}
         <section className="mb-12 rounded-2xl bg-white border border-slate-100 p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-slate-900 mb-1">Where Fund Yield Comes From</h2>
+          <h2 className="text-lg font-semibold text-slate-900 mb-1">Where Yield Comes From</h2>
           <p className="text-sm text-slate-600 mb-4">
-            Athlete funds earn return from real‑world activity, not pure token speculation.
+            Ongoing yield targets are modeled from stablecoin strategies and SPV cashflow policy; transfer events are
+            separate “special distributions.”
           </p>
 
           <div className="space-y-4">
             <div className="flex gap-3">
-              <div className="mt-1 text-xl">💪</div>
-              <div>
-                <p className="text-sm font-semibold text-slate-900">Service Discounts</p>
-                <p className="text-xs text-slate-600">
-                  Aggregated discounts on gyms, housing, travel, and academy fees are captured as economic value and
-                  shared with fund investors.
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <div className="mt-1 text-xl">🎟️</div>
-              <div>
-                <p className="text-sm font-semibold text-slate-900">Club &amp; Tourism Revenue</p>
-                <p className="text-xs text-slate-600">
-                  Shares of tickets, sponsorships, prize money, and CONCACAF‑linked tourism packages flow back into the
-                  pools.
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-3">
               <div className="mt-1 text-xl">🏦</div>
               <div>
-                <p className="text-sm font-semibold text-slate-900">Treasury Yield</p>
+                <p className="text-sm font-semibold text-slate-900">Stablecoin strategies</p>
                 <p className="text-xs text-slate-600">
-                  Unallocated cash is held in CAD‑denominated stablecoins and low‑risk bank products to earn a
-                  conservative base yield.
+                  Base yield targets are variable and depend on market conditions and strategy selection.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <div className="mt-1 text-xl">📦</div>
+              <div>
+                <p className="text-sm font-semibold text-slate-900">SPV cashflow policy</p>
+                <p className="text-xs text-slate-600">
+                  Ongoing distributions are paid only after a 12‑month reserve target is met, and then split between
+                  distribute/retain.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <div className="mt-1 text-xl">⚡</div>
+              <div>
+                <p className="text-sm font-semibold text-slate-900">Transfer events</p>
+                <p className="text-xs text-slate-600">
+                  Special distributions are paid when cash is received (including installments), using a separate tier
+                  waterfall.
                 </p>
               </div>
             </div>
@@ -316,9 +343,8 @@ export default function DefiPage() {
             <div>
               <h2 className="text-lg font-semibold mb-1">Risk &amp; Policy</h2>
               <p className="text-xs opacity-80 max-w-2xl">
-                Athlete development funds are long‑horizon vehicles. Capital is not guaranteed and returns depend on
-                service usage, club performance, and treasury yields. All investors must complete KYC / AML before
-                subscribing.
+                These are long-horizon vehicles. Capital is not guaranteed, NAV may decline, and liquidity is limited to
+                scheduled repurchase offers that can be pro‑rata when oversubscribed. [web:18]
               </p>
             </div>
             <div className="flex gap-3 text-xs">
@@ -344,4 +370,15 @@ export default function DefiPage() {
       </div>
     </main>
   );
+}
+
+function TierPill({ tier }: { tier: Fund["risk"] }) {
+  const cls =
+    tier === "Foundation"
+      ? "bg-slate-100 text-slate-700"
+      : tier === "Academy"
+        ? "bg-amber-50 text-amber-700"
+        : "bg-indigo-50 text-indigo-700";
+
+  return <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${cls}`}>{tier}</span>;
 }
