@@ -27,9 +27,35 @@ const formatBpsPercent = (bps: bigint) => {
   return frac === 0n ? `${whole}%` : `${whole}.${frac.toString().padStart(2, "0")}%`;
 };
 
+// Format bigint as Canadian dollar with commas and cents
+const formatCAD = (amount: bigint | undefined) => {
+  if (!amount) return "$0.00";
+  const numStr = formatUnits(amount, 18);
+  const num = parseFloat(numStr);
+  return new Intl.NumberFormat("en-CA", {
+    style: "currency",
+    currency: "CAD",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(num);
+};
+
+// Format number with commas, no currency symbol (for pool tokens)
+const formatNumber = (amount: bigint | undefined) => {
+  if (!amount) return "0";
+  const numStr = formatUnits(amount, 18);
+  const num = parseFloat(numStr);
+  return new Intl.NumberFormat("en-CA", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  }).format(num);
+};
+
 export function PurchaseVaultShares({ pool, minDeposit }: Props) {
   const [depositAmount, setDepositAmount] = useState("");
   const [sellShares, setSellShares] = useState("");
+  const [faucetAmount, setFaucetAmount] = useState("");
+  const [yearsOfYield, setYearsOfYield] = useState("");
 
   const vaultAddress = CONTRACT_ADDRESSES[pool];
   const cadAddress = CONTRACT_ADDRESSES.cad;
@@ -82,6 +108,14 @@ export function PurchaseVaultShares({ pool, minDeposit }: Props) {
     query: { enabled: true },
   });
 
+  // Total supply of pool tokens
+  const { data: totalSupply, refetch: refetchTotalSupply } = useReadContract({
+    address: vaultAddress,
+    abi: VAULT_ABI,
+    functionName: "totalSupply",
+    query: { enabled: true },
+  });
+
   // READ CURRENT WINDOW ID DIRECTLY FROM CONTRACT
   const { data: currentWindowId, refetch: refetchWindowId } = useReadContract({
     address: repurchaseAddress as `0x${string}`,
@@ -125,6 +159,7 @@ export function PurchaseVaultShares({ pool, minDeposit }: Props) {
     refetchCadBalance();
     refetchVaultShares();
     refetchTotalAssets();
+    refetchTotalSupply();
     refetchWindowId();
     refetchWindow();
   };
@@ -158,14 +193,17 @@ export function PurchaseVaultShares({ pool, minDeposit }: Props) {
     if (!address) return;
 
     switch (action) {
-      case "faucet":
+      case "faucet": {
+        // Use faucetAmount if provided, otherwise default to 10,000,000
+        const amountToMint = faucetAmount ? faucetAmount : "10000000";
         writeContract({
           address: cadAddress as `0x${string}`,
           abi: ERC20_ABI,
           functionName: "faucet",
-          args: [parseUnits("10000000", 18)],
+          args: [parseUnits(amountToMint, 18)],
         });
         break;
+      }
 
       case "approve":
         if (!depositAmount) return;
@@ -210,7 +248,9 @@ export function PurchaseVaultShares({ pool, minDeposit }: Props) {
       case "yield": {
         if (!totalAssets || totalAssets === 0n) return;
 
-        const yieldAssets = (totalAssets * apyBps) / 10_000n;
+        // Use yearsOfYield if provided, otherwise default to 1 year
+        const years = yearsOfYield ? parseInt(yearsOfYield) : 1;
+        const yieldAssets = (totalAssets * apyBps * BigInt(years)) / 10_000n;
         if (yieldAssets === 0n) return;
 
         writeContract({
@@ -224,7 +264,7 @@ export function PurchaseVaultShares({ pool, minDeposit }: Props) {
 
       case "openWindow": {
         const startTime = Math.floor(Date.now() / 1000);
-        const endTime = startTime + 1; // 1 second for instant demo
+        const endTime = startTime + 86400; // 1 day for demo
         const offerBps = 500; // 5%
 
         writeContract({
@@ -306,23 +346,40 @@ export function PurchaseVaultShares({ pool, minDeposit }: Props) {
             ) : (
               <div className="space-y-3">
                 {/* DEMO BUTTONS */}
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    onClick={() => handleAction("transfer10m")}
-                    disabled={isPending}
-                    className="rounded-lg bg-purple-600 px-3 py-2 text-xs font-semibold text-white transition-all hover:bg-purple-700 disabled:opacity-50 shadow-sm hover:shadow-md"
-                  >
-                    {isPending ? "Transferring..." : "💰 Simulate Transfer (Installment)"}
-                  </button>
+                <div className="space-y-2">
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => handleAction("transfer10m")}
+                      disabled={isPending}
+                      className="rounded-lg bg-purple-600 px-3 py-2 text-xs font-semibold text-white transition-all hover:bg-purple-700 disabled:opacity-50 shadow-sm hover:shadow-md"
+                    >
+                      {isPending ? "Transferring..." : "💰 Simulate Transfer (Installment)"}
+                    </button>
 
-                  <button
-                    onClick={() => handleAction("yield")}
-                    disabled={isPending}
-                    className="rounded-lg bg-indigo-600 px-3 py-2 text-xs font-semibold text-white transition-all hover:bg-indigo-700 disabled:opacity-50 shadow-sm hover:shadow-md"
-                    title={`Adds ${apyLabel} of current vault total each click (compounding).`}
-                  >
-                    {isPending ? "Adding Yield..." : `📈 Add 1 Year Yield (${apyLabel})`}
-                  </button>
+                    <button
+                      onClick={() => handleAction("yield")}
+                      disabled={isPending}
+                      className="rounded-lg bg-indigo-600 px-3 py-2 text-xs font-semibold text-white transition-all hover:bg-indigo-700 disabled:opacity-50 shadow-sm hover:shadow-md"
+                      title={`Adds ${yearsOfYield || "1"} year(s) of yield at ${apyLabel}`}
+                    >
+                      {isPending
+                        ? "Adding Yield..."
+                        : yearsOfYield
+                          ? `📈 Add ${yearsOfYield} Year${yearsOfYield === "1" ? "" : "s"} Yield (${apyLabel})`
+                          : `📈 Add 1 Year Yield (${apyLabel})`}
+                    </button>
+                  </div>
+
+                  {/* Input for custom years of yield */}
+                  <input
+                    type="number"
+                    value={yearsOfYield}
+                    onChange={e => setYearsOfYield(e.target.value)}
+                    placeholder="Years of yield (default: 1)"
+                    min="1"
+                    max="50"
+                    className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-1.5 text-xs text-slate-200 placeholder:text-slate-500"
+                  />
                 </div>
 
                 <button
@@ -339,11 +396,10 @@ export function PurchaseVaultShares({ pool, minDeposit }: Props) {
                   <div className="rounded-lg border border-slate-700 bg-slate-900/50 p-3 text-[11px]">
                     <p className="mb-2 font-semibold text-slate-200">Wallet</p>
                     <p className="text-slate-400">
-                      CAD: <span className="text-slate-200">{cadBalance ? formatUnits(cadBalance, 18) : "0"}</span>
+                      CAD: <span className="text-slate-200">{formatCAD(cadBalance)}</span>
                     </p>
                     <p className="text-slate-400">
-                      Pool Tokens:{" "}
-                      <span className="text-slate-200">{vaultShares ? formatUnits(vaultShares, 18) : "0"}</span>
+                      Pool Tokens: <span className="text-slate-200">{formatNumber(vaultShares)}</span>
                     </p>
                   </div>
 
@@ -351,23 +407,36 @@ export function PurchaseVaultShares({ pool, minDeposit }: Props) {
                   <div className="rounded-lg border border-slate-700 bg-slate-900/50 p-3 text-[11px]">
                     <p className="mb-2 font-semibold text-slate-200">Vault</p>
                     <p className="text-slate-400">
-                      Vault total (CAD):{" "}
-                      <span className="text-slate-200">{totalAssets ? formatUnits(totalAssets, 18) : "0"}</span>
+                      Vault total (CAD): <span className="text-slate-200">{formatCAD(totalAssets)}</span>
                     </p>
                     <p className="text-slate-400">
-                      1Y yield @{apyLabel} (CAD):{" "}
-                      <span className="text-slate-200">{oneYearYield ? formatUnits(oneYearYield, 18) : "0"}</span>
+                      Total Pool Tokens: <span className="text-slate-200">{formatNumber(totalSupply)}</span>
+                    </p>
+                    <p className="text-slate-400">
+                      1Y yield @{apyLabel} (CAD): <span className="text-slate-200">{formatCAD(oneYearYield)}</span>
                     </p>
                   </div>
                 </div>
 
                 {/* BUY FLOW */}
+                <input
+                  type="number"
+                  value={faucetAmount}
+                  onChange={e => setFaucetAmount(e.target.value)}
+                  placeholder="Amount of test CAD (default: 10,000,000)"
+                  className="w-full rounded-lg border border-slate-700 bg-slate-900 px-4 py-2 text-sm text-slate-200 placeholder:text-slate-500"
+                />
+
                 <button
                   onClick={() => handleAction("faucet")}
                   disabled={isPending}
                   className="w-full rounded-lg bg-slate-800 px-4 py-2 text-xs font-medium text-slate-200 transition-colors hover:bg-slate-700 disabled:opacity-50"
                 >
-                  {isPending ? "Minting..." : "Get Test CAD (10,000,000)"}
+                  {isPending
+                    ? "Minting..."
+                    : faucetAmount
+                      ? `Get ${faucetAmount} Test CAD`
+                      : "Get Test CAD (10,000,000)"}
                 </button>
 
                 <input
@@ -455,7 +524,7 @@ export function PurchaseVaultShares({ pool, minDeposit }: Props) {
                       disabled={isPending}
                       className="w-full rounded-lg bg-purple-600 px-3 py-1.5 text-[11px] font-semibold text-white transition-colors hover:bg-purple-700 disabled:opacity-50"
                     >
-                      {isPending ? "Opening..." : "🔓 Open Repurchase Window (Admin - 1 sec)"}
+                      {isPending ? "Opening..." : "🔓 Open Repurchase Window (Admin)"}
                     </button>
                   )}
 
@@ -478,7 +547,8 @@ export function PurchaseVaultShares({ pool, minDeposit }: Props) {
                   </button>
 
                   {/* Settle Window Button */}
-                  {!!currentWindowId && currentWindowId > 0n && !isWindowOpen && !isWindowSettled && (
+                  {/* Demo: allow settle while open (removed !isWindowOpen check) */}
+                  {!!currentWindowId && currentWindowId > 0n && !isWindowSettled && (
                     <button
                       onClick={() => handleAction("settleWindow")}
                       disabled={isPending}
@@ -491,7 +561,8 @@ export function PurchaseVaultShares({ pool, minDeposit }: Props) {
                   {/* Claim Payout */}
                   <button
                     onClick={() => handleAction("claim")}
-                    disabled={isPending || !currentWindowId || currentWindowId === 0n || !isWindowSettled}
+                    // disabled={isPending || !currentWindowId || currentWindowId === 0n || !isWindowSettled} // Production: require window settled
+                    disabled={isPending || !currentWindowId || currentWindowId === 0n} // Demo: allow claim without settlement
                     className="w-full rounded-lg bg-sky-600 px-3 py-1.5 text-[11px] font-medium text-white transition-colors hover:bg-sky-700 disabled:opacity-50"
                   >
                     {isPending ? "Claiming..." : "Claim CAD payout"}

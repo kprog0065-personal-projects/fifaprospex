@@ -118,7 +118,7 @@ contract RepurchaseManager is Ownable {
     function settle(uint256 windowId) external {
         Window storage w = windows[windowId];
         require(!w.settled, "settled");
-        require(block.timestamp > w.end, "not ended");
+        // require(block.timestamp > w.end, "not ended"); // Demo: allow settle before end time
 
         if (w.totalTendered == 0 || w.offerShares == 0) {
             w.fillBps = 0;
@@ -158,8 +158,8 @@ contract RepurchaseManager is Ownable {
     }
 
     function claim(uint256 windowId) external {
-        Window memory w = windows[windowId];
-        require(w.settled, "not settled");
+        // Window memory w = windows[windowId]; // Demo: not needed without settlement check
+        // require(w.settled, "not settled"); // Demo: allow claim without settlement
         require(!claimed[windowId][msg.sender], "claimed");
 
         claimed[windowId][msg.sender] = true;

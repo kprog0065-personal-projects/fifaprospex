@@ -18,7 +18,7 @@ contract MockStablecoin is ERC20 {
      * @dev Faucet for demo - anyone can mint up to 1Billion CAD
      */
     function faucet(uint256 amount) external {
-        require(amount <= 1_000_000_000 * 10**decimals(), "Max 10k CAD per call");
+        require(amount <= 1_000_000_000 * 10**decimals(), "Max 1Bn CAD per call");
         _mint(msg.sender, amount);
     }
 }
