@@ -116,7 +116,7 @@ function PoolStats() {
           caption="Repurchase offers after lockup; pro‑rata if oversubscribed."
         />
         <Stat label="Lockup" value="8 years" caption="No repurchases during lockup." />
-        <Stat label="Share pricing" value="NAV" caption="Vault share price floats; not fixed at $0.10." />
+        <Stat label="Share pricing" value="NAV" caption="Share price floats at NAV (Net Asset Value)" />
       </div>
 
       <div className="mt-4 rounded-lg border border-slate-800/80 bg-slate-950/40 p-3">
