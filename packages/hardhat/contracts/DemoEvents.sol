@@ -3,15 +3,17 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 interface IERC4626Asset {
     function asset() external view returns (address);
 }
 
-contract DemoEvents is Ownable {
-    using SafeERC20 for IERC20;
+interface IMintableERC20 {
+    function mintTo(address to, uint256 amount) external;
+}
 
+contract DemoEvents is Ownable {
     address public foundationVault;
     address public academyVault;
     address public proVault;
@@ -49,23 +51,26 @@ contract DemoEvents is Ownable {
     }
 
     /**
-     * @dev Demo "1 year yield" by donating mCAD into a vault.
-     * Caller (owner) must have mCAD and approve this contract.
+     * @dev Demo "1 year yield" by MINTING mCAD directly into a vault.
+     * No need for caller to have tokens or approve.
+     * NOTE: Requires this contract to own the MockStablecoin.
      * NOTE: Open access for demo purposes only.
-     * TODO: Replace with onlyOwner modifier in production.
      */
     function addYearYield(address vault, uint256 assets) external {
         require(vault != address(0), "vault=0");
         require(assets > 0, "assets=0");
-        stable.safeTransferFrom(msg.sender, vault, assets);
+
+        // Mint directly to vault instead of transferFrom
+        IMintableERC20(address(stable)).mintTo(vault, assets);
+
         emit YearYieldAdded(vault, assets);
     }
 
     /**
-     * @dev Demo "transfer installment received" by donating mCAD into vaults using the special-event waterfall.
+     * @dev Demo "transfer installment received" by MINTING mCAD into vaults using the special-event waterfall.
      * Call this multiple times to simulate installments (e.g., 4M, 3M, 3M).
+     * NOTE: Requires this contract to own the MockStablecoin.
      * NOTE: Open access for demo purposes only.
-     * TODO: Replace with onlyOwner modifier in production.
      */
     function simulateTransferInstallment(uint256 assets) external {
         require(foundationVault != address(0), "vaults not set");
@@ -75,9 +80,10 @@ contract DemoEvents is Ownable {
         uint256 academyAssets = (assets * ACADEMY_BPS) / 10_000;
         uint256 proAssets = assets - foundationAssets - academyAssets; // remainder to avoid rounding loss
 
-        stable.safeTransferFrom(msg.sender, foundationVault, foundationAssets);
-        stable.safeTransferFrom(msg.sender, academyVault, academyAssets);
-        stable.safeTransferFrom(msg.sender, proVault, proAssets);
+        // Mint directly to vaults instead of transferFrom
+        IMintableERC20(address(stable)).mintTo(foundationVault, foundationAssets);
+        IMintableERC20(address(stable)).mintTo(academyVault, academyAssets);
+        IMintableERC20(address(stable)).mintTo(proVault, proAssets);
 
         emit TransferInstallmentSimulated(assets, foundationAssets, academyAssets, proAssets);
     }

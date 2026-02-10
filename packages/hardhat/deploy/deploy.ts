@@ -92,6 +92,12 @@ async function main() {
   await (await demoEvents.setVaults(foundationAddress, academyAddress, proAddress)).wait();
   console.log("✅ DemoEvents vault routing set");
 
+  // 5) Transfer MockStablecoin ownership to DemoEvents for minting yield
+  console.log("\n🔄 Transferring MockStablecoin ownership to DemoEvents...");
+  await (await stablecoin.transferOwnership(demoEventsAddress)).wait();
+  console.log("✅ MockStablecoin ownership transferred to DemoEvents");
+  console.log("   → DemoEvents can now mint CAD directly for yield simulation");
+
   // Save addresses for frontend/scripts
   const addresses = {
     stablecoin: stablecoinAddress,
