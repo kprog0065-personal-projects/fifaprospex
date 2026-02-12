@@ -181,7 +181,7 @@ function DistributionsAndLiquidity() {
       </div>
 
       <div className="mt-4 rounded-lg border border-slate-800/80 bg-slate-950/40 p-3">
-        <p className="text-[11px] font-semibold text-slate-200">What “pro‑rata” means</p>
+        <p className="text-[11px] font-semibold text-slate-200">What &quot;pro‑rata&quot; means</p>
         <p className="mt-1 text-[11px] leading-snug text-slate-400">
           If a tier offers 5% of shares this quarter but 12% of shares are tendered, each tender is partially filled so
           the total filled equals the offer size.
@@ -202,7 +202,7 @@ function InfoCard({ title, value, description }: InfoCardProps) {
     <div className="rounded-lg border border-slate-800/80 bg-slate-950/40 p-3">
       <div className="flex items-baseline justify-between gap-3">
         <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-200">{title}</p>
-        <p className="text-sm font-semibold text-indigo-200">{value}</p>
+        <p className="text-sm font-semibold text-orange-300 whitespace-nowrap">{value}</p>
       </div>
       <p className="mt-2 text-[11px] leading-snug text-slate-300">{description}</p>
     </div>
@@ -277,7 +277,7 @@ function ReturnsBreakdown() {
     <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
       <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-300">How returns work</h2>
       <p className="mt-2 text-xs text-slate-300">
-        Returns come from (1) ongoing stablecoin strategy yield that can be DRIP’d into NAV, and (2) special
+        Returns come from (1) ongoing stablecoin strategy yield that can be DRIP&apos;d into NAV, and (2) special
         transfer-event distributions when cash is received.
       </p>
 
@@ -372,7 +372,7 @@ function RiskDisclosure() {
       <ul className="mt-2 space-y-1 text-[11px] text-slate-400">
         <li>Early-stage athlete outcomes are highly uncertain; loss of capital is possible.</li>
         <li>Long lockup; repurchases (if any) occur only in scheduled windows and may be pro‑rata.</li>
-        <li>“APY” targets are variable and not guaranteed; NAV may go down as well as up.</li>
+        <li>&quot;APY&quot; targets are variable and not guaranteed; NAV may go down as well as up.</li>
         <li>Returns depend on player development, transfer markets, and operational execution.</li>
         <li>Regulatory changes may impact token structure, disclosures, or distribution mechanics.</li>
       </ul>
