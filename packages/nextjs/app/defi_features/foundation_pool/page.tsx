@@ -1,6 +1,6 @@
 // app/funds/foundation/page.tsx
 import Link from "next/link";
-import { PurchaseVaultShares } from "~~/components/PurchaseVaultShares";
+import { PurchaseVaultCard } from "~~/components/PurchaseVaultCard";
 
 export default function FoundationPoolPage() {
   return (
@@ -355,34 +355,12 @@ function ImpactItem({ label, value }: ImpactItemProps) {
 function SubscribeCard() {
   return (
     <section className="space-y-4 rounded-xl border border-slate-800 bg-slate-900/70 p-4 shadow-lg">
-      <div className="flex items-center justify-between">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-300">Purchase Vault Shares</p>
-        <span className="rounded-full bg-orange-900/50 px-2 py-0.5 text-[10px] text-orange-300 ring-1 ring-orange-700/50">
-          Foundation Pool
-        </span>
-      </div>
-
-      <p className="text-xs text-slate-300">
-        Connect your wallet to deposit CAD and receive vault shares representing ownership in the Foundation Pool (U12).
-      </p>
-
-      {/* Keep tile unchanged */}
-      <PurchaseVaultShares pool="foundation" minDeposit={500} />
-
-      <div className="rounded-lg border border-slate-800 bg-slate-950/80 p-3">
-        <p className="mb-1 text-[11px] font-semibold text-slate-300">How it works</p>
-        <ol className="space-y-1 text-[11px] text-slate-400">
-          <li>1. Connect wallet (MetaMask recommended)</li>
-          <li>2. Get test CAD from faucet (demo only)</li>
-          <li>3. Approve CAD spending</li>
-          <li>4. Deposit to receive vault shares</li>
-        </ol>
-      </div>
-
-      <p className="text-[11px] text-slate-400">
-        Demo environment using ERC‑4626 vaults. Production requires KYC/AML and formal offering documents in permitted
-        jurisdictions.
-      </p>
+      <PurchaseVaultCard
+        pool="foundation"
+        minDeposit={500}
+        poolLabel="Foundation Pool"
+        poolDescription="Connect your wallet to deposit CAD and receive vault shares representing ownership in the Foundation Pool (U12)."
+      />
     </section>
   );
 }

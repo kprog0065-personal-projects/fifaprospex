@@ -242,6 +242,15 @@ export function PurchaseVaultShares({ pool, minDeposit }: Props) {
           const ready = mounted;
           const connected = ready && account && chain;
 
+          // Wait for RainbowKit to be ready
+          if (!mounted) {
+            return (
+              <div className="flex justify-center items-center py-8">
+                <span className="loading loading-spinner loading-md text-blue-500"></span>
+              </div>
+            );
+          }
+
           return (
             <div className="space-y-4">
               {!connected ? (

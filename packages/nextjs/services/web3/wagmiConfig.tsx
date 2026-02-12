@@ -1,7 +1,8 @@
 import { wagmiConnectors } from "./wagmiConnectors";
 import { Chain, createClient, fallback, http } from "viem";
 import { hardhat, mainnet } from "viem/chains";
-import { createConfig } from "wagmi";
+import { cookieStorage, createConfig, createStorage } from "wagmi";
+// ADD cookieStorage and createStorage
 import scaffoldConfig, { DEFAULT_ALCHEMY_API_KEY, ScaffoldConfig } from "~~/scaffold.config";
 import { getAlchemyHttpUrl } from "~~/utils/scaffold-eth";
 
@@ -16,6 +17,9 @@ export const wagmiConfig = createConfig({
   chains: enabledChains,
   connectors: wagmiConnectors(),
   ssr: true,
+  storage: createStorage({
+    storage: cookieStorage,
+  }), // ADD THIS - Store connection state in cookies
   client: ({ chain }) => {
     const mainnetFallbackWithDefaultRPC = [http("https://mainnet.rpc.buidlguidl.com")];
     let rpcFallbacks = [...(chain.id === mainnet.id ? mainnetFallbackWithDefaultRPC : []), http()];
