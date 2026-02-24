@@ -13,7 +13,7 @@ import { getMetadata } from "~~/utils/scaffold-eth/getMetadata";
 // ADD THIS
 
 export const metadata = getMetadata({
-  title: "Scaffold-ETH 2 App",
+  title: "Prospex",
   description: "Built with 🏗 Scaffold-ETH 2",
 });
 

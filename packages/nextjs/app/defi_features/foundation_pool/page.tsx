@@ -1,5 +1,7 @@
-// app/funds/foundation/page.tsx
+"use client";
+
 import Link from "next/link";
+import { InfoCardAccordion } from "~~/components/InfoCardAccordion";
 import { PurchaseVaultCard } from "~~/components/PurchaseVaultCard";
 
 export default function FoundationPoolPage() {
@@ -14,7 +16,6 @@ export default function FoundationPoolPage() {
             </span>
             <span>Prospex DeFi Dashboard</span>
           </Link>
-
           <div className="flex items-center gap-3">
             <Link href="/funds" className="text-xs text-slate-300 hover:text-white">
               All Pools
@@ -31,7 +32,7 @@ export default function FoundationPoolPage() {
 
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-6 lg:flex-row">
         {/* LEFT COLUMN */}
-        <section className="flex-1 space-y-6">
+        <section className="flex-1 space-y-4">
           {/* Breadcrumb + Title */}
           <div className="space-y-2">
             <div className="text-xs text-slate-400">
@@ -63,25 +64,120 @@ export default function FoundationPoolPage() {
             </div>
           </div>
 
-          {/* Pool Stats */}
+          {/* Pool Stats - Always Visible */}
           <PoolStats />
 
-          {/* Distributions & Liquidity */}
-          <DistributionsAndLiquidity />
+          {/* Collapsible Sections */}
+          <InfoCardAccordion title="Distributions & Liquidity" defaultOpen={false}>
+            <div className="grid gap-4 md:grid-cols-3">
+              <InfoCard
+                title="Reserve policy (demo)"
+                value="12 months"
+                description="Maintain a stablecoin reserve equal to 12 months of fixed costs before paying ongoing distributions."
+              />
+              <InfoCard
+                title="Ongoing payout policy (demo)"
+                value="50 / 50"
+                description="After reserve target is met: 50% distributed, 50% retained for reinvestment/working capital."
+              />
+              <InfoCard
+                title="Repurchase offers"
+                value="Quarterly"
+                description="After lockup, offer up to 5% of outstanding shares per tier each window; if requests exceed the limit, fills are pro‑rata."
+              />
+            </div>
+            <div className="rounded-lg border border-slate-800/80 bg-slate-950/40 p-3">
+              <p className="text-[11px] font-semibold text-slate-200">What &quot;pro‑rata&quot; means</p>
+              <p className="mt-1 text-[11px] leading-snug text-slate-400">
+                If a tier offers 5% of shares this quarter but 12% of shares are tendered, each tender is partially
+                filled so the total filled equals the offer size.
+              </p>
+            </div>
+          </InfoCardAccordion>
 
-          {/* Use of Proceeds */}
-          <UseOfProceeds />
+          <InfoCardAccordion title="Use of Proceeds" defaultOpen={false}>
+            <p className="text-xs text-slate-300">
+              Capital funds early-stage player development through vetted local providers. Services are delivered via
+              transparent contracts and program spend, not cash payments to players.
+            </p>
+            <div className="grid gap-3 md:grid-cols-2">
+              <UseItem
+                title="Core development (50%)"
+                items={[
+                  "Training programs (ball-skill, futsal, strength & conditioning)",
+                  "Professional coaching & nutrition support",
+                  "Player development tracking & assessments",
+                ]}
+              />
+              <UseItem
+                title="Infrastructure & access (30%)"
+                items={[
+                  "Facility rentals (pitches, courts, safe community spaces)",
+                  "Transport stipends for families (program support; not investment yield)",
+                  "Performance data capture (video, GPS, testing)",
+                ]}
+              />
+              <UseItem
+                title="Liquidity & reserves (15%)"
+                items={[
+                  "Stablecoin reserve buffer for ops + repurchase windows",
+                  "Treasury bills / cash equivalents (where applicable)",
+                ]}
+              />
+              <UseItem
+                title="Platform & compliance (5%)"
+                items={["Reporting & investor dashboards", "Compliance workstreams (as applicable per jurisdiction)"]}
+              />
+            </div>
+          </InfoCardAccordion>
 
-          {/* How Returns Work */}
-          <ReturnsBreakdown />
+          <InfoCardAccordion title="How Returns Work" defaultOpen={false}>
+            <p className="text-xs text-slate-300">
+              Returns come from (1) ongoing stablecoin strategy yield that can be DRIP&apos;d into NAV, and (2) special
+              transfer-event distributions when cash is received.
+            </p>
+            <div className="grid gap-4 md:grid-cols-3">
+              <InfoCard
+                title="Ongoing yield (income)"
+                value="DRIP default"
+                description="Ongoing distributions are funded from SPV net cashflow after reserves. By default, distributions compound into NAV; investors can elect stablecoin payout during windows."
+              />
+              <InfoCard
+                title="Transfer events (upside)"
+                value="50/30/20"
+                description="Special distributions use a tier waterfall: Foundation 50%, Academy 30%, Pro 20%. Installments are treated as separate events when cash arrives."
+              />
+              <InfoCard
+                title="Liquidity path"
+                value="Repurchase windows"
+                description="After lockup: quarterly repurchase offers up to 5% per tier at NAV; if oversubscribed, fills are pro‑rata. Not a promise of full exit on demand."
+              />
+            </div>
+          </InfoCardAccordion>
 
-          {/* Impact */}
-          <ImpactMetrics />
+          <InfoCardAccordion title="Impact & Reporting" defaultOpen={false}>
+            <p className="text-xs text-slate-300">
+              Transparent development tracking for each athlete: sessions attended, services consumed, and key
+              milestones. Families see what&apos;s funded; investors see anonymized cohort-level reporting.
+            </p>
+            <div className="grid gap-4 md:grid-cols-3">
+              <ImpactItem label="Cohort size" value="40 U12 players" />
+              <ImpactItem label="Investment model" value="Pool-based (entire cohort)" />
+              <ImpactItem label="Regions in scope" value="Caribbean, Central America, Canadian diaspora" />
+            </div>
+          </InfoCardAccordion>
         </section>
 
         {/* RIGHT COLUMN */}
-        <aside className="w-full max-w-md space-y-4 lg:w-80">
-          <SubscribeCard />
+        <aside className="w-full space-y-4 lg:w-80">
+          <section className="space-y-4 rounded-xl border border-slate-800 bg-slate-900/70 p-4 shadow-lg">
+            <PurchaseVaultCard
+              pool="foundation"
+              minDeposit={500}
+              poolLabel="Foundation Pool"
+              poolDescription="Connect your wallet to deposit CAD and receive vault shares representing ownership in the Foundation Pool (U12)."
+            />
+          </section>
           <RiskDisclosure />
         </aside>
       </div>
@@ -89,7 +185,7 @@ export default function FoundationPoolPage() {
   );
 }
 
-/* ---------- Components ---------- */
+/* ── Sub-components ──────────────────────────────────────────── */
 
 function RiskBadge() {
   return (
@@ -106,19 +202,17 @@ function RiskBadge() {
 function PoolStats() {
   return (
     <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-4 shadow-sm">
-      <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-300">Pool snapshot</h2>
-
+      <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-300">Pool Snapshot</h2>
       <div className="mt-3 grid grid-cols-2 gap-4 md:grid-cols-4">
-        <Stat label="Target base APY (variable)" value="6%" caption="Stablecoin yield target; not guaranteed." />
+        <Stat label="Target Base APY (variable)" value="6%" caption="Stablecoin yield target; not guaranteed." />
         <Stat
-          label="Quarterly liquidity"
+          label="Quarterly Liquidity"
           value="Up to 5%/qtr"
           caption="Repurchase offers after lockup; pro‑rata if oversubscribed."
         />
         <Stat label="Lockup" value="8 years" caption="No repurchases during lockup." />
-        <Stat label="Share pricing" value="NAV" caption="Share price floats at NAV (Net Asset Value)" />
+        <Stat label="Share Pricing" value="NAV" caption="Share price floats at NAV (Net Asset Value)" />
       </div>
-
       <div className="mt-4 rounded-lg border border-slate-800/80 bg-slate-950/40 p-3">
         <p className="text-[11px] font-semibold text-slate-200">Two flows (kept separate)</p>
         <div className="mt-2 grid gap-2 md:grid-cols-2">
@@ -141,12 +235,7 @@ function PoolStats() {
   );
 }
 
-type StatProps = {
-  label: string;
-  value: string;
-  caption?: string;
-};
-
+type StatProps = { label: string; value: string; caption?: string };
 function Stat({ label, value, caption }: StatProps) {
   return (
     <div className="space-y-1">
@@ -157,105 +246,20 @@ function Stat({ label, value, caption }: StatProps) {
   );
 }
 
-function DistributionsAndLiquidity() {
-  return (
-    <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
-      <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-300">Distributions & liquidity</h2>
-
-      <div className="mt-3 grid gap-4 md:grid-cols-3">
-        <InfoCard
-          title="Reserve policy (demo)"
-          value="12 months"
-          description="Maintain a stablecoin reserve equal to 12 months of fixed costs before paying ongoing distributions."
-        />
-        <InfoCard
-          title="Ongoing payout policy (demo)"
-          value="50 / 50"
-          description="After reserve target is met: 50% distributed, 50% retained for reinvestment/working capital."
-        />
-        <InfoCard
-          title="Repurchase offers"
-          value="Quarterly"
-          description="After lockup, offer up to 5% of outstanding shares per tier each window; if requests exceed the limit, fills are pro‑rata."
-        />
-      </div>
-
-      <div className="mt-4 rounded-lg border border-slate-800/80 bg-slate-950/40 p-3">
-        <p className="text-[11px] font-semibold text-slate-200">What &quot;pro‑rata&quot; means</p>
-        <p className="mt-1 text-[11px] leading-snug text-slate-400">
-          If a tier offers 5% of shares this quarter but 12% of shares are tendered, each tender is partially filled so
-          the total filled equals the offer size.
-        </p>
-      </div>
-    </section>
-  );
-}
-
-type InfoCardProps = {
-  title: string;
-  value: string;
-  description: string;
-};
-
+type InfoCardProps = { title: string; value: string; description: string };
 function InfoCard({ title, value, description }: InfoCardProps) {
   return (
     <div className="rounded-lg border border-slate-800/80 bg-slate-950/40 p-3">
       <div className="flex items-baseline justify-between gap-3">
         <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-200">{title}</p>
-        <p className="text-sm font-semibold text-orange-300 whitespace-nowrap">{value}</p>
+        <p className="whitespace-nowrap text-sm font-semibold text-orange-300">{value}</p>
       </div>
       <p className="mt-2 text-[11px] leading-snug text-slate-300">{description}</p>
     </div>
   );
 }
 
-function UseOfProceeds() {
-  return (
-    <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
-      <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-300">Use of proceeds</h2>
-      <p className="mt-2 text-xs text-slate-300">
-        Capital funds early-stage player development through vetted local providers. Services are delivered via
-        transparent contracts and program spend, not cash payments to players.
-      </p>
-
-      <div className="mt-3 grid gap-3 md:grid-cols-2">
-        <UseItem
-          title="Core development (50%)"
-          items={[
-            "Training programs (ball-skill, futsal, strength & conditioning)",
-            "Professional coaching & nutrition support",
-            "Player development tracking & assessments",
-          ]}
-        />
-        <UseItem
-          title="Infrastructure & access (30%)"
-          items={[
-            "Facility rentals (pitches, courts, safe community spaces)",
-            "Transport stipends for families (program support; not investment yield)",
-            "Performance data capture (video, GPS, testing)",
-          ]}
-        />
-        <UseItem
-          title="Liquidity & reserves (15%)"
-          items={[
-            "Stablecoin reserve buffer for ops + repurchase windows",
-            "Treasury bills / cash equivalents (where applicable)",
-          ]}
-        />
-        <UseItem
-          title="Platform & compliance (5%)"
-          items={["Reporting & investor dashboards", "Compliance workstreams (as applicable per jurisdiction)"]}
-        />
-      </div>
-    </section>
-  );
-}
-
-type UseItemProps = {
-  title: string;
-  items: string[];
-};
-
+type UseItemProps = { title: string; items: string[] };
 function UseItem({ title, items }: UseItemProps) {
   return (
     <div className="rounded-lg border border-slate-800/80 bg-slate-950/40 p-3">
@@ -263,7 +267,7 @@ function UseItem({ title, items }: UseItemProps) {
       <ul className="mt-2 space-y-1 text-[11px] text-slate-300">
         {items.map(item => (
           <li key={item} className="flex gap-2">
-            <span className="mt-[5px] h-1 w-1 rounded-full bg-slate-500" />
+            <span className="mt-[5px] h-1 w-1 shrink-0 rounded-full bg-slate-500" />
             <span>{item}</span>
           </li>
         ))}
@@ -272,77 +276,7 @@ function UseItem({ title, items }: UseItemProps) {
   );
 }
 
-function ReturnsBreakdown() {
-  return (
-    <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
-      <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-300">How returns work</h2>
-      <p className="mt-2 text-xs text-slate-300">
-        Returns come from (1) ongoing stablecoin strategy yield that can be DRIP&apos;d into NAV, and (2) special
-        transfer-event distributions when cash is received.
-      </p>
-
-      <div className="mt-3 grid gap-4 md:grid-cols-3">
-        <ReturnItem
-          title="Ongoing yield (income)"
-          value="DRIP default"
-          description="Ongoing distributions are funded from SPV net cashflow after reserves. By default, distributions compound into NAV; investors can elect stablecoin payout during windows."
-        />
-        <ReturnItem
-          title="Transfer events (upside)"
-          value="50/30/20"
-          description="Special distributions use a tier waterfall: Foundation 50%, Academy 30%, Pro 20%. Installments are treated as separate events when cash arrives."
-        />
-        <ReturnItem
-          title="Liquidity path"
-          value="Repurchase windows"
-          description="After lockup: quarterly repurchase offers up to 5% per tier at NAV; if oversubscribed, fills are pro‑rata. Not a promise of full exit on demand."
-        />
-      </div>
-    </section>
-  );
-}
-
-type ReturnItemProps = {
-  title: string;
-  value: string;
-  description: string;
-};
-
-function ReturnItem({ title, value, description }: ReturnItemProps) {
-  return (
-    <div className="rounded-lg border border-slate-800/80 bg-slate-950/40 p-3">
-      <div className="flex items-baseline justify-between">
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-200">{title}</p>
-        <p className="text-sm font-semibold text-orange-300">{value}</p>
-      </div>
-      <p className="mt-2 text-[11px] leading-snug text-slate-300">{description}</p>
-    </div>
-  );
-}
-
-function ImpactMetrics() {
-  return (
-    <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
-      <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-300">Impact & reporting</h2>
-      <p className="mt-2 text-xs text-slate-300">
-        Transparent development tracking for each athlete: sessions attended, services consumed, and key milestones.
-        Families see what&apos;s funded; investors see anonymized cohort-level reporting.
-      </p>
-
-      <div className="mt-3 grid gap-4 md:grid-cols-3">
-        <ImpactItem label="Cohort size" value="40 U12 players" />
-        <ImpactItem label="Investment model" value="Pool-based (entire cohort)" />
-        <ImpactItem label="Regions in scope" value="Caribbean, Central America, Canadian diaspora" />
-      </div>
-    </section>
-  );
-}
-
-type ImpactItemProps = {
-  label: string;
-  value: string;
-};
-
+type ImpactItemProps = { label: string; value: string };
 function ImpactItem({ label, value }: ImpactItemProps) {
   return (
     <div className="rounded-lg border border-slate-800/80 bg-slate-950/40 p-3">
@@ -352,23 +286,10 @@ function ImpactItem({ label, value }: ImpactItemProps) {
   );
 }
 
-function SubscribeCard() {
-  return (
-    <section className="space-y-4 rounded-xl border border-slate-800 bg-slate-900/70 p-4 shadow-lg">
-      <PurchaseVaultCard
-        pool="foundation"
-        minDeposit={500}
-        poolLabel="Foundation Pool"
-        poolDescription="Connect your wallet to deposit CAD and receive vault shares representing ownership in the Foundation Pool (U12)."
-      />
-    </section>
-  );
-}
-
 function RiskDisclosure() {
   return (
     <section className="rounded-xl border border-slate-900 bg-slate-950/80 p-3">
-      <h2 className="text-[11px] font-semibold uppercase tracking-wide text-slate-300">Key risks</h2>
+      <h2 className="text-[11px] font-semibold uppercase tracking-wide text-slate-300">Key Risks</h2>
       <ul className="mt-2 space-y-1 text-[11px] text-slate-400">
         <li>Early-stage athlete outcomes are highly uncertain; loss of capital is possible.</li>
         <li>Long lockup; repurchases (if any) occur only in scheduled windows and may be pro‑rata.</li>
