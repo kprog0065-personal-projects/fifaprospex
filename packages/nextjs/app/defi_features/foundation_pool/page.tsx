@@ -44,7 +44,7 @@ export default function FoundationPoolPage() {
 
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <h1 className="text-xl font-semibold tracking-tight">Foundation Pool (U12)</h1>
+                <h1 className="text-xl font-semibold tracking-tight">Foundation Pool (U6-U11)</h1>
                 <p className="mt-1 max-w-xl text-xs text-slate-300">
                   High-risk, long-duration pool funding early athlete development. Ongoing yield comes from stablecoin
                   strategies; major upside (if it happens) comes from transfer-event cashflows distributed via a
@@ -204,13 +204,17 @@ function PoolStats() {
     <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-4 shadow-sm">
       <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-300">Pool Snapshot</h2>
       <div className="mt-3 grid grid-cols-2 gap-4 md:grid-cols-4">
-        <Stat label="Target Base APY (variable)" value="6%" caption="Stablecoin yield target; not guaranteed." />
+        <Stat
+          label="Target Base APY (variable)"
+          value="8-12%"
+          caption="4-5% base yield from tokenized TradFi, additional from club economics; not guaranteed."
+        />
         <Stat
           label="Quarterly Liquidity"
           value="Up to 5%/qtr"
           caption="Repurchase offers after lockup; pro‑rata if oversubscribed."
         />
-        <Stat label="Lockup" value="8 years" caption="No repurchases during lockup." />
+        <Stat label="Lockup" value="6 years" caption="No repurchases during lockup." />
         <Stat label="Share Pricing" value="NAV" caption="Share price floats at NAV (Net Asset Value)" />
       </div>
       <div className="mt-4 rounded-lg border border-slate-800/80 bg-slate-950/40 p-3">

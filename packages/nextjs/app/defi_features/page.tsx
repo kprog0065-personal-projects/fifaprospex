@@ -20,7 +20,7 @@ const funds: Fund[] = [
   {
     name: "Foundation Pool",
     slug: "foundation_pool",
-    focus: "Early-stage cohort funding (U12).",
+    focus: "Early-stage cohort (U6-U11).",
     risk: "Foundation",
     returnProfile: "Base yield + long-tail transfer-event upside (separate waterfall).",
     lockup: "8 years",
@@ -32,7 +32,7 @@ const funds: Fund[] = [
   {
     name: "Pathway Pool",
     slug: "pathway_pool",
-    focus: "Academy pathway cohort support (U14).",
+    focus: "Academy pathway cohort (U12-U17).",
     risk: "Academy",
     returnProfile: "Income-weighted + transfer-event upside (separate waterfall).",
     lockup: "5 years",
@@ -44,7 +44,7 @@ const funds: Fund[] = [
   {
     name: "Pro Pool",
     slug: "pro_path",
-    focus: "Late-stage cohort (U18–U21) with income focus.",
+    focus: "Late-stage cohort (U18-U23).",
     risk: "Pro",
     returnProfile: "Highest base yield target + scheduled liquidity; smaller transfer-event bucket.",
     lockup: "2 years",
