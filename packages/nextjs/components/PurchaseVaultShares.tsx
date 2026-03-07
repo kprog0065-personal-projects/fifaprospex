@@ -15,11 +15,12 @@ interface Props {
 }
 
 // 1 bp = 0.01%
-// 600 = 6.00%, 800 = 8.00%, 1000 = 10.00%
+// All pools use 5% (500 bps) as base TradFi yield
+// Waterfall top-up closes the gap to advertised APY ranges
 const POOL_APY_BPS: Record<Pool, bigint> = {
-  foundation: 600n,
-  pathway: 800n,
-  proPath: 1000n,
+  foundation: 500n, // was 600n — base TradFi 5% (BUIDL/BENJI ~4.5%, rounded to 5% for demo)
+  pathway: 500n, // was 800n
+  proPath: 500n, // was 1000n
 };
 
 const formatBpsPercent = (bps: bigint) => {
@@ -235,7 +236,7 @@ export function PurchaseVaultShares({ pool, minDeposit }: Props) {
   return (
     <>
       {/* Demo Control Panel */}
-      <DemoControlPanel pool={pool} apyLabel={apyLabel} apyBps={apyBps} totalAssets={totalAssets} address={address} />
+      <DemoControlPanel pool={pool} totalAssets={totalAssets} address={address} />
 
       <ConnectButton.Custom>
         {({ account, chain, openConnectModal, mounted }) => {

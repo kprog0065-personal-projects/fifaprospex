@@ -109,6 +109,17 @@ export const DEMO_EVENTS_ABI = [
     stateMutability: "nonpayable",
     type: "function",
   },
+  // ✅ NEW — required for solidarity button
+  {
+    inputs: [
+      { name: "vault", type: "address" },
+      { name: "grossTransferFee", type: "uint256" },
+    ],
+    name: "simulateSolidarity",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ] as const;
 
 // RepurchaseManager ABI (copied from your RepurchaseManager.json "abi" field)
