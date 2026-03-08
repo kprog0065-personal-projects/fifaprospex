@@ -20,10 +20,10 @@ contract DemoEvents is Ownable {
 
     IERC20 public immutable stable; // mCAD
 
-    // Waterfall split: Pro 50 / Academy 30 / Foundation 20
-    uint16 public constant FOUNDATION_BPS = 2000;
-    uint16 public constant ACADEMY_BPS = 3000;
-    uint16 public constant PRO_BPS = 5000;
+    // Waterfall split: Foundation 50 / Academy 30 / Pro 20
+    uint16 public constant FOUNDATION_BPS = 5000; // ✅ 50%
+    uint16 public constant ACADEMY_BPS = 3000; // ✅ 30%
+    uint16 public constant PRO_BPS = 2000; // ✅ 20%
 
     // SPV and platform fee constants
     uint16 public constant SPV_SHARE_BPS = 4900; // 49%
@@ -83,7 +83,7 @@ contract DemoEvents is Ownable {
     /**
      * @dev Demo transfer installment.
      * Pass gross installment amount — contract calculates:
-     *   SPV 49% share → platform fee 5% → net to waterfall → Pro/Academy/Foundation split
+     *   SPV 49% share → platform fee 5% → net to waterfall → Foundation/Academy/Pro split
      * Call multiple times to simulate installments.
      * NOTE: Open access for demo purposes only.
      */

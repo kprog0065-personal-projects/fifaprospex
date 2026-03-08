@@ -44,7 +44,7 @@ export default function PathwayPoolPage() {
 
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <h1 className="text-xl font-semibold tracking-tight">Pathway Pool (U14)</h1>
+                <h1 className="text-xl font-semibold tracking-tight">Pathway Pool (U12-U17)</h1>
                 <p className="mt-1 max-w-xl text-xs text-slate-300">
                   Medium-risk pool funding top U14 academy players selected for Canada/CPL pathways. Supports
                   cross-border transition, education, diaspora housing, and cultural adjustment. Hybrid cash + bonus

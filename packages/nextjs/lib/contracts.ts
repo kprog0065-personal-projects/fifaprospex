@@ -52,6 +52,24 @@ export const VAULT_ABI = [
     stateMutability: "view",
     type: "function",
   },
+  {
+    inputs: [{ name: "shares", type: "uint256" }],
+    name: "previewRedeem",
+    outputs: [{ name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { name: "shares", type: "uint256" },
+      { name: "receiver", type: "address" },
+      { name: "owner", type: "address" },
+    ],
+    name: "redeem",
+    outputs: [{ name: "", type: "uint256" }],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ] as const;
 
 export const ERC20_ABI = [
@@ -68,6 +86,26 @@ export const ERC20_ABI = [
   {
     inputs: [{ name: "amount", type: "uint256" }],
     name: "faucet",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { name: "recipients", type: "address[]" },
+      { name: "amount", type: "uint256" },
+    ],
+    name: "batchFaucet",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { name: "recipients", type: "address[]" },
+      { name: "amounts", type: "uint256[]" },
+    ],
+    name: "batchMintTo",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

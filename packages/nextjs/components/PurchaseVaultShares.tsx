@@ -5,7 +5,7 @@ import { DemoControlPanel } from "./DemoControlPanel";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { formatUnits, parseUnits } from "viem";
 import { useAccount, useBlockNumber, useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
-import { CONTRACT_ADDRESSES, ERC20_ABI, REPURCHASE_MANAGER_ABI, VAULT_ABI } from "~~/lib/contracts";
+import { CONTRACT_ADDRESSES, ERC20_ABI, VAULT_ABI } from "~~/lib/contracts";
 
 type Pool = "foundation" | "pathway" | "proPath";
 
@@ -14,13 +14,10 @@ interface Props {
   minDeposit: number;
 }
 
-// 1 bp = 0.01%
-// All pools use 5% (500 bps) as base TradFi yield
-// Waterfall top-up closes the gap to advertised APY ranges
 const POOL_APY_BPS: Record<Pool, bigint> = {
-  foundation: 500n, // was 600n — base TradFi 5% (BUIDL/BENJI ~4.5%, rounded to 5% for demo)
-  pathway: 500n, // was 800n
-  proPath: 500n, // was 1000n
+  foundation: 500n,
+  pathway: 500n,
+  proPath: 500n,
 };
 
 const formatBpsPercent = (bps: bigint) => {
@@ -29,11 +26,9 @@ const formatBpsPercent = (bps: bigint) => {
   return frac === 0n ? `${whole}%` : `${whole}.${frac.toString().padStart(2, "0")}%`;
 };
 
-// Format bigint as Canadian dollar with commas and cents
 const formatCAD = (amount: bigint | undefined) => {
   if (!amount) return "$0.00";
-  const numStr = formatUnits(amount, 18);
-  const num = parseFloat(numStr);
+  const num = parseFloat(formatUnits(amount, 18));
   return new Intl.NumberFormat("en-CA", {
     style: "currency",
     currency: "CAD",
@@ -42,11 +37,9 @@ const formatCAD = (amount: bigint | undefined) => {
   }).format(num);
 };
 
-// Format number with commas, no currency symbol (for pool tokens)
 const formatNumber = (amount: bigint | undefined) => {
   if (!amount) return "0";
-  const numStr = formatUnits(amount, 18);
-  const num = parseFloat(numStr);
+  const num = parseFloat(formatUnits(amount, 18));
   return new Intl.NumberFormat("en-CA", {
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
@@ -60,14 +53,6 @@ export function PurchaseVaultShares({ pool, minDeposit }: Props) {
   const vaultAddress = CONTRACT_ADDRESSES[pool];
   const cadAddress = CONTRACT_ADDRESSES.cad;
 
-  // one repurchase manager per pool
-  const repurchaseAddress =
-    pool === "foundation"
-      ? CONTRACT_ADDRESSES.foundationRepurchase
-      : pool === "pathway"
-        ? CONTRACT_ADDRESSES.pathwayRepurchase
-        : CONTRACT_ADDRESSES.proPathRepurchase;
-
   const { address } = useAccount();
 
   const apyBps = POOL_APY_BPS[pool];
@@ -80,7 +65,6 @@ export function PurchaseVaultShares({ pool, minDeposit }: Props) {
     query: { enabled: !!txHash },
   });
 
-  // Watch new blocks, refetch reads
   const { data: blockNumber } = useBlockNumber({ watch: true });
 
   const { data: cadBalance, refetch: refetchCadBalance } = useReadContract({
@@ -99,7 +83,6 @@ export function PurchaseVaultShares({ pool, minDeposit }: Props) {
     query: { enabled: !!address },
   });
 
-  // Total value held by the vault (mCAD)
   const { data: totalAssets, refetch: refetchTotalAssets } = useReadContract({
     address: vaultAddress,
     abi: VAULT_ABI,
@@ -107,7 +90,6 @@ export function PurchaseVaultShares({ pool, minDeposit }: Props) {
     query: { enabled: true },
   });
 
-  // Total supply of pool tokens
   const { data: totalSupply, refetch: refetchTotalSupply } = useReadContract({
     address: vaultAddress,
     abi: VAULT_ABI,
@@ -115,37 +97,20 @@ export function PurchaseVaultShares({ pool, minDeposit }: Props) {
     query: { enabled: true },
   });
 
-  // READ CURRENT WINDOW ID DIRECTLY FROM CONTRACT
-  const { data: currentWindowId, refetch: refetchWindowId } = useReadContract({
-    address: repurchaseAddress as `0x${string}`,
-    abi: REPURCHASE_MANAGER_ABI,
-    functionName: "currentWindowId",
-    query: { enabled: !!repurchaseAddress },
+  // Preview how much CAD a share redemption would return
+  const { data: previewRedeemAmount } = useReadContract({
+    address: vaultAddress,
+    abi: VAULT_ABI,
+    functionName: "previewRedeem",
+    args: sellShares ? [parseUnits(sellShares, 18)] : undefined,
+    query: { enabled: !!sellShares && parseFloat(sellShares) > 0 },
   });
-
-  // GET WINDOW DETAILS
-  const { data: windowData, refetch: refetchWindow } = useReadContract({
-    address: repurchaseAddress as `0x${string}`,
-    abi: REPURCHASE_MANAGER_ABI,
-    functionName: "windows",
-    args: [currentWindowId || 0n],
-    query: {
-      enabled: !!repurchaseAddress && !!currentWindowId && currentWindowId > 0n,
-    },
-  });
-
-  // Parse window status
-  const isWindowSettled = windowData ? windowData[5] : false;
-  const windowEnd = windowData ? windowData[1] : 0n;
-  const isWindowOpen = windowData && !isWindowSettled && Date.now() / 1000 < Number(windowEnd);
 
   const refetchAll = () => {
     refetchCadBalance();
     refetchVaultShares();
     refetchTotalAssets();
     refetchTotalSupply();
-    refetchWindowId();
-    refetchWindow();
   };
 
   useEffect(() => {
@@ -160,7 +125,10 @@ export function PurchaseVaultShares({ pool, minDeposit }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isTxSuccess]);
 
-  const handleAction = (action: "approve" | "deposit" | "approveSell" | "tender" | "settleWindow" | "claim") => {
+  // 1-year simple yield display
+  const oneYearYield = totalAssets ? (totalAssets * apyBps) / 10_000n : 0n;
+
+  const handleAction = (action: "approve" | "deposit" | "redeem") => {
     if (!address) return;
 
     switch (action) {
@@ -184,58 +152,20 @@ export function PurchaseVaultShares({ pool, minDeposit }: Props) {
         });
         break;
 
-      case "approveSell": {
+      case "redeem":
         if (!sellShares) return;
-
         writeContract({
           address: vaultAddress as `0x${string}`,
-          abi: ERC20_ABI,
-          functionName: "approve",
-          args: [repurchaseAddress as `0x${string}`, parseUnits(sellShares, 18)],
+          abi: VAULT_ABI,
+          functionName: "redeem",
+          args: [parseUnits(sellShares, 18), address, address],
         });
         break;
-      }
-
-      case "tender": {
-        if (!sellShares || !currentWindowId || currentWindowId === 0n) return;
-        writeContract({
-          address: repurchaseAddress as `0x${string}`,
-          abi: REPURCHASE_MANAGER_ABI,
-          functionName: "tender",
-          args: [currentWindowId, parseUnits(sellShares, 18)],
-        });
-        break;
-      }
-
-      case "settleWindow": {
-        if (!currentWindowId || currentWindowId === 0n) return;
-        writeContract({
-          address: repurchaseAddress as `0x${string}`,
-          abi: REPURCHASE_MANAGER_ABI,
-          functionName: "settle",
-          args: [currentWindowId],
-        });
-        break;
-      }
-
-      case "claim": {
-        if (!currentWindowId || currentWindowId === 0n) return;
-        writeContract({
-          address: repurchaseAddress as `0x${string}`,
-          abi: REPURCHASE_MANAGER_ABI,
-          functionName: "claim",
-          args: [currentWindowId],
-        });
-        break;
-      }
     }
   };
 
-  const oneYearYield = totalAssets ? (totalAssets * apyBps) / 10_000n : 0n;
-
   return (
     <>
-      {/* Demo Control Panel */}
       <DemoControlPanel pool={pool} totalAssets={totalAssets} address={address} />
 
       <ConnectButton.Custom>
@@ -243,7 +173,6 @@ export function PurchaseVaultShares({ pool, minDeposit }: Props) {
           const ready = mounted;
           const connected = ready && account && chain;
 
-          // Wait for RainbowKit to be ready
           if (!mounted) {
             return (
               <div className="flex justify-center items-center py-8">
@@ -294,7 +223,7 @@ export function PurchaseVaultShares({ pool, minDeposit }: Props) {
                     </div>
                   </div>
 
-                  {/* BUY FLOW */}
+                  {/* ── BUY FLOW ── */}
                   <input
                     type="number"
                     value={depositAmount}
@@ -319,9 +248,9 @@ export function PurchaseVaultShares({ pool, minDeposit }: Props) {
                     {isPending ? "Depositing..." : "Deposit into Vault"}
                   </button>
 
-                  {/* SELL / REPURCHASE FLOW */}
+                  {/* ── SELL / INSTANT REDEEM ── */}
                   <div className="rounded-lg border border-slate-800 bg-slate-950/50 p-3 space-y-2 text-[11px] text-slate-400">
-                    <p className="mb-1 font-semibold text-slate-200">Sell / Withdraw (Repurchase Window)</p>
+                    <p className="font-semibold text-slate-200">Sell Shares</p>
 
                     <input
                       type="number"
@@ -331,97 +260,27 @@ export function PurchaseVaultShares({ pool, minDeposit }: Props) {
                       className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-1.5 text-[11px] text-slate-200 placeholder:text-slate-500"
                     />
 
-                    {/* Window Status Display */}
-                    <div className="flex gap-2 items-center">
-                      <input
-                        type="text"
-                        value={
-                          currentWindowId && currentWindowId > 0n
-                            ? `Window #${currentWindowId.toString()}`
-                            : "No active window"
-                        }
-                        readOnly
-                        className="flex-1 rounded-lg border border-slate-700 bg-slate-900/50 px-3 py-1.5 text-[11px] text-slate-200 cursor-not-allowed"
-                      />
-                      <span
-                        className={`px-2 py-1 text-[10px] rounded-full whitespace-nowrap ${
-                          isWindowOpen
-                            ? "bg-emerald-500/20 text-emerald-300"
-                            : isWindowSettled
-                              ? "bg-blue-500/20 text-blue-300"
-                              : currentWindowId && currentWindowId > 0n
-                                ? "bg-amber-500/20 text-amber-300"
-                                : "bg-slate-500/20 text-slate-400"
-                        }`}
-                      >
-                        {currentWindowId && currentWindowId > 0n
-                          ? isWindowOpen
-                            ? "Open"
-                            : isWindowSettled
-                              ? "Settled"
-                              : "Closed"
-                          : "None"}
-                      </span>
-                    </div>
-
-                    {/* Window end time */}
-                    {windowEnd > 0n && (
-                      <p className="text-[10px] text-slate-500">
-                        {isWindowOpen
-                          ? `Closes: ${new Date(Number(windowEnd) * 1000).toLocaleString()}`
-                          : `Closed: ${new Date(Number(windowEnd) * 1000).toLocaleString()}`}
-                      </p>
+                    {/* Live CAD preview */}
+                    {previewRedeemAmount !== undefined && sellShares && parseFloat(sellShares) > 0 && (
+                      <div className="rounded-lg bg-slate-900/80 border border-slate-700 p-2 text-[10px]">
+                        <p className="text-slate-400">
+                          You will receive:{" "}
+                          <span className="text-emerald-300 font-semibold">{formatCAD(previewRedeemAmount)}</span>
+                        </p>
+                      </div>
                     )}
 
-                    {/* Approve Shares */}
                     <button
-                      onClick={() => handleAction("approveSell")}
-                      disabled={isPending || !sellShares || !isWindowOpen}
-                      className="w-full rounded-lg bg-slate-800 px-3 py-1.5 text-[11px] font-medium text-slate-200 transition-colors hover:bg-slate-700 disabled:opacity-50"
-                    >
-                      {isPending ? "Approving..." : "Approve share spending"}
-                    </button>
-
-                    {/* Tender Shares */}
-                    <button
-                      onClick={() => handleAction("tender")}
-                      disabled={isPending || !sellShares || !currentWindowId || currentWindowId === 0n || !isWindowOpen}
+                      onClick={() => handleAction("redeem")}
+                      disabled={isPending || !sellShares}
                       className="w-full rounded-lg bg-rose-600 px-3 py-1.5 text-[11px] font-medium text-white transition-colors hover:bg-rose-700 disabled:opacity-50"
                     >
-                      {isPending ? "Tendering..." : "Sell shares into window"}
+                      {isPending ? "Redeeming..." : "Sell Shares for CAD"}
                     </button>
 
-                    {/* Settle Window Button */}
-                    {/* Demo: allow settle while open (removed !isWindowOpen check) */}
-                    {!!currentWindowId && currentWindowId > 0n && !isWindowSettled && (
-                      <button
-                        onClick={() => handleAction("settleWindow")}
-                        disabled={isPending}
-                        className="w-full rounded-lg bg-amber-600 px-3 py-1.5 text-[11px] font-semibold text-white transition-colors hover:bg-amber-700 disabled:opacity-50"
-                      >
-                        {isPending ? "Settling..." : "⚙️ Settle Window (Admin)"}
-                      </button>
-                    )}
-
-                    {/* Claim Payout */}
-                    <button
-                      onClick={() => handleAction("claim")}
-                      // disabled={isPending || !currentWindowId || currentWindowId === 0n || !isWindowSettled} // Production: require window settled
-                      disabled={isPending || !currentWindowId || currentWindowId === 0n} // Demo: allow claim without settlement
-                      className="w-full rounded-lg bg-sky-600 px-3 py-1.5 text-[11px] font-medium text-white transition-colors hover:bg-sky-700 disabled:opacity-50"
-                    >
-                      {isPending ? "Claiming..." : "Claim CAD payout"}
-                    </button>
-
-                    {/* Help Text */}
                     <p className="text-[10px] text-slate-500">
-                      {!currentWindowId || currentWindowId === 0n
-                        ? "Admin must open a tender window first."
-                        : isWindowOpen
-                          ? `Window open - tender shares before ${new Date(Number(windowEnd) * 1000).toLocaleString()}`
-                          : !isWindowSettled
-                            ? "Window closed. Admin must settle before you can claim."
-                            : "Window settled. Claim your CAD for filled shares."}
+                      Shares redeemed instantly at current vault NAV. In production, withdrawals are gated by quarterly
+                      repurchase windows.
                     </p>
                   </div>
 

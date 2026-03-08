@@ -44,7 +44,7 @@ export default function ProPathPoolPage() {
 
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <h1 className="text-xl font-semibold tracking-tight">Pro Path Pool (U18–U21)</h1>
+                <h1 className="text-xl font-semibold tracking-tight">Pro Path Pool (U18–U23)</h1>
                 <p className="mt-1 max-w-xl text-xs text-slate-300">
                   Late-stage cohort targeting near-term CPL/MLS signings. Income-weighted structure with scheduled
                   liquidity; transfer-event upside is smaller but paid with priority.

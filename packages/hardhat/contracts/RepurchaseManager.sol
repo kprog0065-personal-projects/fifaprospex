@@ -73,7 +73,7 @@ contract RepurchaseManager is Ownable {
      */
     function openWindow(uint64 start, uint64 end, uint16 offerBps) external returns (uint256 windowId) {
         require(end > start, "bad window");
-        require(offerBps > 0 && offerBps <= 2500, "offerBps max 25%");
+        require(offerBps > 0 && offerBps <= 10000, "offerBps max 100%");
         // simple: do not allow overlapping open windows
         if (nextWindowId > 1) {
             Window memory prev = windows[nextWindowId - 1];
