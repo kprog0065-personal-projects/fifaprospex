@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { InfoCardAccordion } from "~~/components/InfoCardAccordion";
+import { PoolSwitcher } from "~~/components/PoolSwitcher";
 import { PurchaseVaultShares } from "~~/components/PurchaseVaultShares";
 
 export default function PathwayPoolPage() {
@@ -33,7 +34,6 @@ export default function PathwayPoolPage() {
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-6 lg:flex-row">
         {/* LEFT COLUMN */}
         <section className="flex-1 space-y-4">
-          {/* Breadcrumb + Title */}
           <div className="space-y-2">
             <div className="text-xs text-slate-400">
               <Link href="/defi_features" className="hover:text-slate-200">
@@ -42,17 +42,22 @@ export default function PathwayPoolPage() {
               / <span className="text-slate-300">Pathway Pool</span>
             </div>
 
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div>
-                <h1 className="text-xl font-semibold tracking-tight">Pathway Pool (U12-U17)</h1>
-                <p className="mt-1 max-w-xl text-xs text-slate-300">
-                  Medium-risk pool funding top U14 academy players selected for Canada/CPL pathways. Supports
-                  cross-border transition, education, diaspora housing, and cultural adjustment. Hybrid cash + bonus
-                  token returns.
-                </p>
-              </div>
+            <PoolSwitcher />
+
+            {/* Title row with inline badge */}
+            <div className="flex items-center gap-3">
+              <h1 className="text-xl font-semibold tracking-tight">Pathway Pool (U12-U17)</h1>
               <RiskBadge />
             </div>
+
+            {/* Description + subtitle */}
+            <p className="max-w-xl text-xs text-slate-300">
+              Medium-risk pool funding top U14 academy players selected for Canada/CPL pathways. Supports cross-border
+              transition, education, diaspora housing, and cultural adjustment. Hybrid cash + bonus token returns.
+            </p>
+            <p className="text-[11px] text-slate-400">
+              85% attrition rate. Balanced risk-return profile with mixed cash and token payouts.
+            </p>
 
             <div className="rounded-lg border border-slate-800 bg-slate-950/40 p-3">
               <p className="text-[11px] font-semibold text-slate-200">Important</p>
@@ -64,10 +69,8 @@ export default function PathwayPoolPage() {
             </div>
           </div>
 
-          {/* Pool Stats - Always Visible */}
           <PoolStats />
 
-          {/* Collapsible Sections */}
           <InfoCardAccordion title="Distributions & Liquidity" defaultOpen={false}>
             <div className="grid gap-4 md:grid-cols-3">
               <InfoCard
@@ -212,14 +215,9 @@ export default function PathwayPoolPage() {
 
 function RiskBadge() {
   return (
-    <div className="flex flex-col items-end gap-1 text-xs">
-      <div className="inline-flex items-center gap-2 rounded-full bg-amber-950/60 px-3 py-1 text-amber-300 ring-1 ring-amber-700/60">
-        <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
-        <span className="font-medium">Medium Risk</span>
-      </div>
-      <p className="text-[11px] text-slate-400">
-        85% attrition rate. Balanced risk-return profile with mixed cash and token payouts.
-      </p>
+    <div className="inline-flex items-center gap-2 rounded-full bg-amber-950/60 px-3 py-1 text-xs text-amber-300 ring-1 ring-amber-700/60">
+      <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
+      <span className="font-medium">Medium Risk</span>
     </div>
   );
 }
@@ -229,13 +227,13 @@ function PoolStats() {
     <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-4 shadow-sm">
       <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-300">Pool Snapshot</h2>
       <div className="mt-3 grid grid-cols-2 gap-4 md:grid-cols-4">
-        <Stat label="Target Base APY (variable)" value="8%" caption="Stablecoin yield target; not guaranteed." />
+        <Stat label="Target Base APY (variable)" value="6-9%" caption="Stablecoin yield target; not guaranteed." />
         <Stat
           label="Quarterly Liquidity"
-          value="Up to 5%/qtr"
+          value="Up to 10%/qtr"
           caption="Repurchase offers after lockup; pro-rata if oversubscribed."
         />
-        <Stat label="Lockup" value="5 years" caption="No repurchases during lockup." />
+        <Stat label="Lockup" value="4 years" caption="No repurchases during lockup." />
         <Stat label="Share Pricing" value="NAV" caption="Share price floats at NAV (Net Asset Value)" />
       </div>
       <div className="mt-4 rounded-lg border border-slate-800/80 bg-slate-950/40 p-3">

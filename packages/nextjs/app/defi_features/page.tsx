@@ -8,11 +8,14 @@ type Fund = {
   slug: string;
   focus: string;
   risk: "Foundation" | "Academy" | "Pro";
+  riskLabel: string;
   returnProfile: string;
   lockup: string;
   targetBaseApy: string;
   liquidity: string;
-  size: string;
+  hardCap: string;
+  minWallet: string;
+  maxWallet: string;
   athletes: number;
 };
 
@@ -20,38 +23,47 @@ const funds: Fund[] = [
   {
     name: "Foundation Pool",
     slug: "foundation_pool",
-    focus: "Early-stage cohort (U6-U11).",
+    focus: "Early-stage cohort (U6–U11).",
     risk: "Foundation",
-    returnProfile: "Base yield + long-tail transfer-event upside (separate waterfall).",
-    lockup: "8 years",
-    targetBaseApy: "6% (variable)",
-    liquidity: "Quarterly repurchase offers up to 5% after lockup (pro‑rata).",
-    size: "C$2.3M",
+    riskLabel: "High Risk",
+    returnProfile: "Base yield + uncapped long-tail transfer upside (VC-style waterfall).",
+    lockup: "6 years",
+    targetBaseApy: "8–12% (variable)",
+    liquidity: "Quarterly repurchase up to 5% NAV after lockup (pro‑rata).",
+    hardCap: "C$1.5M",
+    minWallet: "C$500",
+    maxWallet: "C$10,000",
     athletes: 40,
   },
   {
     name: "Pathway Pool",
     slug: "pathway_pool",
-    focus: "Academy pathway cohort (U12-U17).",
+    focus: "Academy pathway cohort (U12–U17).",
     risk: "Academy",
-    returnProfile: "Income-weighted + transfer-event upside (separate waterfall).",
-    lockup: "5 years",
-    targetBaseApy: "8% (variable)",
-    liquidity: "Quarterly repurchase offers up to 5% after lockup (pro‑rata).",
-    size: "C$4.8M",
+    riskLabel: "Medium Risk",
+    returnProfile: "Hybrid cash + bonus token returns; moderate transfer upside.",
+    lockup: "4 years",
+    targetBaseApy: "6–9% (variable)",
+    liquidity: "Quarterly repurchase up to 10% NAV after lockup (pro‑rata).",
+    hardCap: "C$4M",
+    minWallet: "C$1,500",
+    maxWallet: "C$25,000",
     athletes: 24,
   },
   {
-    name: "Pro Pool",
+    name: "Pro Path Pool",
     slug: "pro_path",
-    focus: "Late-stage cohort (U18-U23).",
+    focus: "Late-stage cohort (U18–U23).",
     risk: "Pro",
-    returnProfile: "Highest base yield target + scheduled liquidity; smaller transfer-event bucket.",
+    riskLabel: "Low Risk",
+    returnProfile: "Income-first; priority waterfall payout; capped transfer upside.",
     lockup: "2 years",
-    targetBaseApy: "10% (variable)",
-    liquidity: "Quarterly repurchase offers up to 5% after lockup (pro‑rata).",
-    size: "C$3.1M",
-    athletes: 18,
+    targetBaseApy: "4–6% (variable)",
+    liquidity: "Quarterly repurchase up to 15% NAV after lockup (pro‑rata).",
+    hardCap: "C$6M",
+    minWallet: "C$5,000",
+    maxWallet: "C$100,000",
+    athletes: 12,
   },
 ];
 
@@ -78,28 +90,68 @@ export default function DefiPage() {
         <section className="mb-10 grid gap-4 md:grid-cols-4">
           <div className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
             <p className="text-xs uppercase tracking-wide text-slate-500">Total Assets</p>
-            <p className="mt-2 text-2xl font-semibold text-slate-900">C$10.2M</p>
-            <p className="mt-1 text-[11px] text-slate-500">Demo number.</p>
+            <p className="mt-2 text-2xl font-semibold text-slate-900">C$11.5M</p>
+            <div className="mt-2 space-y-1">
+              <div className="flex justify-between text-[11px]">
+                <span className="text-slate-500">Foundation Pool</span>
+                <span className="font-medium text-slate-700">C$1.5M</span>
+              </div>
+              <div className="flex justify-between text-[11px]">
+                <span className="text-slate-500">Pathway Pool</span>
+                <span className="font-medium text-slate-700">C$4M</span>
+              </div>
+              <div className="flex justify-between text-[11px]">
+                <span className="text-slate-500">Pro Path Pool</span>
+                <span className="font-medium text-slate-700">C$6M</span>
+              </div>
+            </div>
           </div>
 
           <div className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
-            <p className="text-xs uppercase tracking-wide text-slate-500">Distribution Policy</p>
-            <p className="mt-2 text-2xl font-semibold text-slate-900">50 / 50</p>
-            <p className="mt-1 text-[11px] text-slate-500">After 12‑month reserve target is met.</p>
+            <p className="text-xs uppercase tracking-wide text-slate-500">Active Pools</p>
+            <p className="mt-2 text-2xl font-semibold text-slate-900">3 / Year</p>
+            <p className="mt-1 text-[11px] text-slate-500">
+              Foundation · Academy · Pro Path — new cohort opens annually.
+            </p>
           </div>
 
           <div className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
             <p className="text-xs uppercase tracking-wide text-slate-500">Athletes Supported</p>
             <p className="mt-2 text-2xl font-semibold text-slate-900">{totals.totalAthletes}</p>
-            <p className="mt-1 text-[11px] text-slate-500">Cohort sizes (demo).</p>
+            <div className="mt-2 space-y-1">
+              <div className="flex justify-between text-[11px]">
+                <span className="text-slate-500">Foundation (U6–U11)</span>
+                <span className="font-medium text-slate-700">40 athletes</span>
+              </div>
+              <div className="flex justify-between text-[11px]">
+                <span className="text-slate-500">Academy (U12–U17)</span>
+                <span className="font-medium text-slate-700">24 athletes</span>
+              </div>
+              <div className="flex justify-between text-[11px]">
+                <span className="text-slate-500">Pro Path (U18–U23)</span>
+                <span className="font-medium text-slate-700">12 athletes</span>
+              </div>
+            </div>
           </div>
 
           <div className="rounded-2xl border border-indigo-900 bg-indigo-900 p-4 shadow-sm text-indigo-50">
             <p className="text-xs uppercase tracking-wide opacity-80">Liquidity</p>
-            <p className="mt-2 text-sm">
-              Quarterly repurchase offers • Up to 5% per tier • Pro‑rata if oversubscribed.
-            </p>
-            <p className="mt-1 text-[11px] opacity-80">Modeled on interval-fund style offers.</p>
+            <p className="mt-2 text-sm font-semibold">Quarterly Repurchase</p>
+            <div className="mt-2 space-y-1.5">
+              <div className="flex justify-between text-[11px]">
+                <span className="opacity-70">Foundation</span>
+                <span className="font-medium">5% / qtr</span>
+              </div>
+              <div className="flex justify-between text-[11px]">
+                <span className="opacity-70">Academy</span>
+                <span className="font-medium">10% / qtr</span>
+              </div>
+              <div className="flex justify-between text-[11px]">
+                <span className="opacity-70">Pro Path</span>
+                <span className="font-medium">15% / qtr</span>
+              </div>
+            </div>
+            <p className="mt-2 text-[11px] opacity-70">Pro‑rata if oversubscribed.</p>
           </div>
         </section>
 
@@ -116,38 +168,42 @@ export default function DefiPage() {
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">How to read this table</p>
             <ul className="mt-2 space-y-1 text-[12px] text-slate-600">
               <li>&quot;Target base APY&quot; is variable and not guaranteed.</li>
-              <li>&quot;Liquidity&quot; is via scheduled repurchase offers after lockup; fills may be pro‑rata.</li>
-              <li>Transfer events are paid only when cash is received (installments treated as separate events).</li>
+              <li>
+                Liquidity is via scheduled quarterly repurchase offers after lockup; each pool has a different max
+                repurchase rate — fills may be pro‑rata.
+              </li>
+              <li>Transfer upside is separate from base yield and paid only when club proceeds are received.</li>
             </ul>
           </div>
 
           <div className="overflow-x-auto rounded-2xl border border-slate-100 bg-white shadow-sm">
             {/* Desktop Table Header */}
-            <div className="hidden grid-cols-9 gap-3 border-b border-slate-100 bg-slate-50 px-6 py-3 text-xs font-semibold text-slate-500 md:grid">
+            <div className="hidden grid-cols-10 gap-3 border-b border-slate-100 bg-slate-50 px-6 py-3 text-xs font-semibold text-slate-500 md:grid">
               <span className="col-span-1">Fund</span>
-              <span className="col-span-1">Tier</span>
+              <span className="col-span-1">Risk Tier</span>
               <span className="col-span-2">Focus</span>
-              <span className="col-span-1">Target Base APY</span>
+              <span className="col-span-1">Target APY</span>
               <span className="col-span-1">Lockup</span>
-              <span className="col-span-2">Liquidity</span>
+              <span className="col-span-1">Hard Cap</span>
+              <span className="col-span-1">Min / Max</span>
+              <span className="col-span-1">Liquidity</span>
               <span className="col-span-1 text-right">Action</span>
             </div>
 
             {/* Table Rows */}
             <div className="divide-y divide-slate-100">
               {funds.map(fund => (
-                <div key={fund.slug} className="grid grid-cols-1 items-center gap-3 px-6 py-4 md:grid-cols-9">
+                <div key={fund.slug} className="grid grid-cols-1 items-center gap-3 px-6 py-4 md:grid-cols-10">
                   <div className="col-span-1">
                     <p className="text-sm font-semibold text-slate-900">{fund.name}</p>
                     <p className="mt-0.5 text-xs text-slate-500 md:hidden">{fund.returnProfile}</p>
                   </div>
 
                   <div className="col-span-1">
-                    <TierPill tier={fund.risk} />
+                    <TierPill tier={fund.risk} label={fund.riskLabel} />
                   </div>
 
                   <div className="col-span-2">
-                    <span className="text-xs font-semibold text-slate-600 md:hidden">Focus: </span>
                     <span className="text-xs text-slate-600">{fund.focus}</span>
                     <p className="mt-1 hidden text-[11px] text-slate-500 md:block">{fund.returnProfile}</p>
                   </div>
@@ -161,7 +217,16 @@ export default function DefiPage() {
                     <span className="text-xs text-slate-600">{fund.lockup}</span>
                   </div>
 
-                  <div className="col-span-2">
+                  <div className="col-span-1">
+                    <span className="text-xs font-medium text-slate-700">{fund.hardCap}</span>
+                  </div>
+
+                  <div className="col-span-1">
+                    <p className="text-[11px] text-slate-600">Min: {fund.minWallet}</p>
+                    <p className="text-[11px] text-slate-600">Max: {fund.maxWallet}</p>
+                  </div>
+
+                  <div className="col-span-1">
                     <span className="text-xs text-slate-600">{fund.liquidity}</span>
                   </div>
 
@@ -194,7 +259,7 @@ export default function DefiPage() {
                 <div key={fund.slug} className="rounded-xl border border-slate-100 bg-slate-50 p-4">
                   <div className="flex items-center justify-between">
                     <p className="text-xs font-semibold text-slate-700">{fund.name}</p>
-                    <TierPill tier={fund.risk} />
+                    <TierPill tier={fund.risk} label={fund.riskLabel} />
                   </div>
                   <div className="mt-3 space-y-2">
                     <div className="flex justify-between text-xs">
@@ -234,7 +299,7 @@ export default function DefiPage() {
         <section className="mb-12 rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
           <h2 className="mb-1 text-lg font-semibold text-slate-900">Where Yield Comes From</h2>
           <p className="mb-4 text-sm text-slate-600">
-            Ongoing yield targets are modeled from stablecoin strategies and SPV cashflow policy; transfer events are
+            Ongoing yield targets are modeled from stablecoin strategies and SPV cashflow policy; club proceeds are
             separate &quot;special distributions.&quot;
           </p>
 
@@ -254,8 +319,8 @@ export default function DefiPage() {
               <div>
                 <p className="text-sm font-semibold text-slate-900">SPV cashflow policy</p>
                 <p className="text-xs text-slate-600">
-                  Ongoing distributions are paid only after a 12‑month reserve target is met, and then split between
-                  distribute/retain.
+                  Ongoing distributions are paid only after a 12‑month reserve target is met, then split between
+                  distribute and retain to keep the vault operationally stable.
                 </p>
               </div>
             </div>
@@ -263,10 +328,10 @@ export default function DefiPage() {
             <div className="flex gap-3">
               <div className="mt-1 text-xl">⚡</div>
               <div>
-                <p className="text-sm font-semibold text-slate-900">Transfer events</p>
+                <p className="text-sm font-semibold text-slate-900">Club proceeds</p>
                 <p className="text-xs text-slate-600">
-                  Special distributions are paid when cash is received (including installments), using a separate tier
-                  waterfall.
+                  Special distributions paid when club proceeds are received, via a tiered waterfall: Pro Path first,
+                  then Academy, then Foundation. Installments treated as separate events.
                 </p>
               </div>
             </div>
@@ -308,13 +373,33 @@ export default function DefiPage() {
   );
 }
 
-function TierPill({ tier }: { tier: Fund["risk"] }) {
-  const cls =
-    tier === "Foundation"
-      ? "bg-slate-100 text-slate-700"
-      : tier === "Academy"
-        ? "bg-amber-50 text-amber-700"
-        : "bg-indigo-50 text-indigo-700";
+function TierPill({ tier, label }: { tier: Fund["risk"]; label: string }) {
+  const styles = {
+    Foundation: {
+      wrapper: "bg-orange-50 ring-1 ring-orange-300",
+      dot: "bg-orange-400",
+      text: "text-orange-700",
+    },
+    Academy: {
+      wrapper: "bg-amber-50 ring-1 ring-amber-300",
+      dot: "bg-amber-400",
+      text: "text-amber-700",
+    },
+    Pro: {
+      wrapper: "bg-emerald-50 ring-1 ring-emerald-300",
+      dot: "bg-emerald-500",
+      text: "text-emerald-700",
+    },
+  };
 
-  return <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${cls}`}>{tier}</span>;
+  const s = styles[tier];
+
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${s.wrapper} ${s.text}`}
+    >
+      <span className={`h-2 w-2 rounded-full ${s.dot}`} />
+      {label}
+    </span>
+  );
 }

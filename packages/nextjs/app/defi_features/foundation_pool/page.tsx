@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { InfoCardAccordion } from "~~/components/InfoCardAccordion";
+import { PoolSwitcher } from "~~/components/PoolSwitcher";
 import { PurchaseVaultCard } from "~~/components/PurchaseVaultCard";
 
 export default function FoundationPoolPage() {
@@ -33,7 +34,6 @@ export default function FoundationPoolPage() {
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-6 lg:flex-row">
         {/* LEFT COLUMN */}
         <section className="flex-1 space-y-4">
-          {/* Breadcrumb + Title */}
           <div className="space-y-2">
             <div className="text-xs text-slate-400">
               <Link href="/funds" className="hover:text-slate-200">
@@ -42,17 +42,24 @@ export default function FoundationPoolPage() {
               / <span className="text-slate-300">Foundation Pool</span>
             </div>
 
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div>
-                <h1 className="text-xl font-semibold tracking-tight">Foundation Pool (U6-U11)</h1>
-                <p className="mt-1 max-w-xl text-xs text-slate-300">
-                  High-risk, long-duration pool funding early athlete development. Ongoing yield comes from stablecoin
-                  strategies; major upside (if it happens) comes from transfer-event cashflows distributed via a
-                  separate waterfall.
-                </p>
-              </div>
+            <PoolSwitcher />
+
+            {/* Title row with inline badge */}
+            <div className="flex items-center gap-3">
+              <h1 className="text-xl font-semibold tracking-tight">Foundation Pool (U6-U11)</h1>
               <RiskBadge />
             </div>
+
+            {/* Description + subtitle below */}
+            <p className="max-w-xl text-xs text-slate-300">
+              High-risk, long-duration pool funding early athlete development across U6–U11 cohorts. Ongoing yield comes
+              from stablecoin strategies; major upside (if it happens) comes from transfer-event cashflows distributed
+              via a tiered waterfall. Capital loss is possible — outcomes depend entirely on long-term player
+              development.
+            </p>
+            <p className="text-[11px] text-slate-400">
+              Long lockup, limited liquidity, outcomes depend on player success.
+            </p>
 
             <div className="rounded-lg border border-slate-800 bg-slate-950/40 p-3">
               <p className="text-[11px] font-semibold text-slate-200">Important</p>
@@ -64,10 +71,8 @@ export default function FoundationPoolPage() {
             </div>
           </div>
 
-          {/* Pool Stats - Always Visible */}
           <PoolStats />
 
-          {/* Collapsible Sections */}
           <InfoCardAccordion title="Distributions & Liquidity" defaultOpen={false}>
             <div className="grid gap-4 md:grid-cols-3">
               <InfoCard
@@ -189,12 +194,9 @@ export default function FoundationPoolPage() {
 
 function RiskBadge() {
   return (
-    <div className="flex flex-col items-end gap-1 text-xs">
-      <div className="inline-flex items-center gap-2 rounded-full bg-orange-950/60 px-3 py-1 text-orange-300 ring-1 ring-orange-700/60">
-        <span className="h-2.5 w-2.5 rounded-full bg-orange-400" />
-        <span className="font-medium">High Risk</span>
-      </div>
-      <p className="text-[11px] text-slate-400">Long lockup, limited liquidity, outcomes depend on player success.</p>
+    <div className="inline-flex items-center gap-2 rounded-full bg-orange-950/60 px-3 py-1 text-xs text-orange-300 ring-1 ring-orange-700/60">
+      <span className="h-2.5 w-2.5 rounded-full bg-orange-400" />
+      <span className="font-medium">High Risk</span>
     </div>
   );
 }

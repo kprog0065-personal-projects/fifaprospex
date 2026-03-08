@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { InfoCardAccordion } from "~~/components/InfoCardAccordion";
+import { PoolSwitcher } from "~~/components/PoolSwitcher";
 import { PurchaseVaultShares } from "~~/components/PurchaseVaultShares";
 
 export default function ProPathPoolPage() {
@@ -33,7 +34,6 @@ export default function ProPathPoolPage() {
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-6 lg:flex-row">
         {/* LEFT COLUMN */}
         <section className="flex-1 space-y-4">
-          {/* Breadcrumb + title */}
           <div className="space-y-2">
             <div className="text-xs text-slate-400">
               <Link href="/defi_features" className="hover:text-slate-200">
@@ -42,16 +42,20 @@ export default function ProPathPoolPage() {
               / <span className="text-slate-300">Pro Path Pool</span>
             </div>
 
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div>
-                <h1 className="text-xl font-semibold tracking-tight">Pro Path Pool (U18–U23)</h1>
-                <p className="mt-1 max-w-xl text-xs text-slate-300">
-                  Late-stage cohort targeting near-term CPL/MLS signings. Income-weighted structure with scheduled
-                  liquidity; transfer-event upside is smaller but paid with priority.
-                </p>
-              </div>
+            <PoolSwitcher />
+
+            {/* Title row with inline badge */}
+            <div className="flex items-center gap-3">
+              <h1 className="text-xl font-semibold tracking-tight">Pro Path Pool (U18–U23)</h1>
               <RiskBadge />
             </div>
+
+            {/* Description + subtitle */}
+            <p className="max-w-xl text-xs text-slate-300">
+              Late-stage cohort targeting near-term CPL/MLS signings. Income-weighted structure with scheduled
+              liquidity; transfer-event upside is smaller but paid with priority.
+            </p>
+            <p className="text-[11px] text-slate-400">Higher hit-rate cohort; priority cash distributions.</p>
 
             <div className="rounded-lg border border-slate-800 bg-slate-950/40 p-3">
               <p className="text-[11px] font-semibold text-slate-200">Important</p>
@@ -63,10 +67,8 @@ export default function ProPathPoolPage() {
             </div>
           </div>
 
-          {/* Pool Stats - Always Visible */}
           <PoolStats />
 
-          {/* Collapsible Sections */}
           <InfoCardAccordion title="Distributions & Liquidity" defaultOpen={false}>
             <div className="grid gap-4 md:grid-cols-3">
               <InfoCard
@@ -212,12 +214,9 @@ export default function ProPathPoolPage() {
 
 function RiskBadge() {
   return (
-    <div className="flex flex-col items-end gap-1 text-xs">
-      <div className="inline-flex items-center gap-2 rounded-full bg-emerald-950/60 px-3 py-1 text-emerald-300 ring-1 ring-emerald-700/60">
-        <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
-        <span className="font-medium">Low Risk</span>
-      </div>
-      <p className="text-[11px] text-slate-400">Higher hit-rate cohort; priority cash distributions.</p>
+    <div className="inline-flex items-center gap-2 rounded-full bg-emerald-950/60 px-3 py-1 text-xs text-emerald-300 ring-1 ring-emerald-700/60">
+      <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+      <span className="font-medium">Low Risk</span>
     </div>
   );
 }
@@ -227,8 +226,8 @@ function PoolStats() {
     <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-4 shadow-sm">
       <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-300">Pool Snapshot</h2>
       <div className="mt-3 grid grid-cols-2 gap-4 md:grid-cols-4">
-        <Stat label="Target Base APY (variable)" value="10%" caption="Income-weighted; not guaranteed." />
-        <Stat label="Quarterly Liquidity" value="Up to 5%/qtr" caption="After lockup; pro‑rata if oversubscribed." />
+        <Stat label="Target Base APY (variable)" value="4-6%" caption="Income-weighted; not guaranteed." />
+        <Stat label="Quarterly Liquidity" value="Up to 15%/qtr" caption="After lockup; pro‑rata if oversubscribed." />
         <Stat label="Lockup" value="2 years" caption="No repurchases during lockup." />
         <Stat label="Share Pricing" value="NAV" caption="Vault share price floats; not a fixed token price." />
       </div>
